@@ -50,8 +50,6 @@ Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
 Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"#;
 
-    const INPUT: &str = include_str!("../puzzle/day04/input");
-
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE), 13);
@@ -59,7 +57,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"#;
 
     #[test]
     fn part1_input() {
-        assert_eq!(part1(INPUT), 15205);
+        assert_eq!(part1(&read_day_input(std::module_path!())), 15205);
     }
 
     #[test]
@@ -69,6 +67,6 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"#;
 
     #[test]
     fn part2_input() {
-        assert_eq!(part2(INPUT), 6189740);
+        assert_eq!(part2(&read_day_input(std::module_path!())), 6189740);
     }
 }

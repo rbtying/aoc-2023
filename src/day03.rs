@@ -112,8 +112,6 @@ mod tests {
 ...$.*....
 .664.598.."#;
 
-    const INPUT: &str = include_str!("../puzzle/day03/input");
-
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE), 4361);
@@ -121,7 +119,7 @@ mod tests {
 
     #[test]
     fn part1_input() {
-        assert_eq!(part1(INPUT), 544664);
+        assert_eq!(part1(&read_day_input(std::module_path!())), 544664);
     }
 
     #[test]
@@ -131,6 +129,6 @@ mod tests {
 
     #[test]
     fn part2_input() {
-        assert_eq!(part2(INPUT), 84495585);
+        assert_eq!(part2(&read_day_input(std::module_path!())), 84495585);
     }
 }

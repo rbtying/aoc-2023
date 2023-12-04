@@ -57,6 +57,8 @@ pub fn part2(input: &str) -> u32 {
 
 #[cfg(test)]
 mod tests {
+    use crate::prelude::read_day_input;
+
     use super::*;
 
     const EXAMPLE: &str = r#"1abc2
@@ -71,8 +73,6 @@ xtwone3four
 zoneight234
 7pqrstsixteen"#;
 
-    const INPUT: &str = include_str!("../puzzle/day01/input");
-
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE), 142);
@@ -80,7 +80,7 @@ zoneight234
 
     #[test]
     fn part1_input() {
-        assert_eq!(part1(INPUT), 54159);
+        assert_eq!(part1(&read_day_input(std::module_path!())), 54159);
     }
 
     #[test]
@@ -90,6 +90,6 @@ zoneight234
 
     #[test]
     fn part2_input() {
-        assert_eq!(part2(INPUT), 53866);
+        assert_eq!(part2(&read_day_input(std::module_path!())), 53866);
     }
 }

@@ -9,7 +9,7 @@ macro_rules! impl_from_str_infallible {
         $( impl<'a> InfallibleFromStr<'a> for $t
         {
             fn from_str_infallible(s: &str) -> Self {
-                <$t>::from_str(s).expect("Failed to parse string")
+                <$t>::from_str(s.trim()).expect("Failed to parse string")
             }
         }) *
         }

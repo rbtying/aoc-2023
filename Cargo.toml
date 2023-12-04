@@ -7,5 +7,6 @@ edition = "2021"
 
 [dependencies]
 defaultmap = "0.6.0"
+memoize = "0.4.1"
 regex = "1.10.2"
 sscanf = "0.4.1"

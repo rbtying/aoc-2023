@@ -56,8 +56,6 @@ mod tests {
     Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
     Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"#;
 
-    const INPUT: &str = include_str!("../puzzle/day02/input");
-
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE), 8);
@@ -65,7 +63,7 @@ mod tests {
 
     #[test]
     fn part1_input() {
-        assert_eq!(part1(INPUT), 2563);
+        assert_eq!(part1(&read_day_input(std::module_path!())), 2563);
     }
 
     #[test]
@@ -75,6 +73,6 @@ mod tests {
 
     #[test]
     fn part2_input() {
-        assert_eq!(part2(INPUT), 70768);
+        assert_eq!(part2(&read_day_input(std::module_path!())), 70768);
     }
 }
