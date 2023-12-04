@@ -74,22 +74,22 @@ zoneight234
     const INPUT: &str = include_str!("../puzzle/day01/input");
 
     #[test]
-    fn day01_part1_example() {
+    fn part1_example() {
         assert_eq!(part1(EXAMPLE), 142);
     }
 
     #[test]
-    fn day01_part1_input() {
+    fn part1_input() {
         assert_eq!(part1(INPUT), 54159);
     }
 
     #[test]
-    fn day01_part2_example() {
+    fn part2_example() {
         assert_eq!(part2(EXAMPLE2), 281);
     }
 
     #[test]
-    fn day01_part2_input() {
+    fn part2_input() {
         assert_eq!(part2(INPUT), 53866);
     }
 }

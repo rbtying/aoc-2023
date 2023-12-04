@@ -59,22 +59,22 @@ mod tests {
     const INPUT: &str = include_str!("../puzzle/day02/input");
 
     #[test]
-    fn day01_part1_example() {
+    fn part1_example() {
         assert_eq!(part1(EXAMPLE), 8);
     }
 
     #[test]
-    fn day01_part1_input() {
+    fn part1_input() {
         assert_eq!(part1(INPUT), 2563);
     }
 
     #[test]
-    fn day01_part2_example() {
+    fn part2_example() {
         assert_eq!(part2(EXAMPLE), 2286);
     }
 
     #[test]
-    fn day01_part2_input() {
+    fn part2_input() {
         assert_eq!(part2(INPUT), 70768);
     }
 }
