@@ -1,60 +1,24 @@
-use std::str::FromStr;
-
-#[derive(Debug)]
-struct Game {
-    number: u32,
-    views: Vec<View>,
-}
-
-impl Game {
-    fn from_str(s: &str) -> Game {
-        let line = s.split_once("Game ").unwrap().1;
-        let (game_num, line) = line.split_once(": ").unwrap();
-        Game {
-            number: u32::from_str(game_num).unwrap(),
-            views: line.split("; ").map(View::from_str).collect(),
-        }
-    }
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
-struct View {
-    red: u32,
-    green: u32,
-    blue: u32,
-}
-
-impl View {
-    fn from_str(s: &str) -> View {
-        let mut v = View::default();
-        for segment in s.split(", ") {
-            let (num, color) = segment.split_once(" ").unwrap();
-            let num = u32::from_str(num).unwrap();
-            match color {
-                "red" => v.red = num,
-                "blue" => v.blue = num,
-                "green" => v.green = num,
-                _ => unreachable!(),
-            }
-        }
-        v
-    }
-}
+use crate::prelude::*;
 
 pub fn part1(input: &str) -> u32 {
     let mut sum = 0;
     for line in input.lines() {
-        let game = Game::from_str(line);
-
+        let (num, line): (u32, &str) = parse_split_once(drop_prefix(line, "Game "), ": ");
         let mut valid = true;
-        for v in &game.views {
-            if v.red > 12 || v.green > 13 || v.blue > 14 {
-                valid = false;
+        for view in line.split("; ") {
+            for colorseq in view.split(", ") {
+                let (ct, color): (u32, &str) = parse_split_once(colorseq, " ");
+                valid = valid
+                    && match color {
+                        "red" if ct > 12 => false,
+                        "blue" if ct > 14 => false,
+                        "green" if ct > 13 => false,
+                        _ => true,
+                    };
             }
         }
-
         if valid {
-            sum += game.number;
+            sum += num;
         }
     }
     sum
@@ -63,16 +27,21 @@ pub fn part1(input: &str) -> u32 {
 pub fn part2(input: &str) -> u32 {
     let mut sum = 0;
     for line in input.lines() {
-        let game = Game::from_str(line);
-        let mut max = View::default();
+        let line: &str = parse_right(line, ": ");
+        let (mut r, mut g, mut b) = (0, 0, 0);
 
-        for v in &game.views {
-            max.red = v.red.max(max.red);
-            max.blue = v.blue.max(max.blue);
-            max.green = v.green.max(max.green);
+        for view in line.split("; ") {
+            for colorseq in view.split(", ") {
+                let (ct, color): (u32, &str) = parse_split_once(colorseq, " ");
+                match color {
+                    "red" => r = r.max(ct),
+                    "blue" => b = b.max(ct),
+                    "green" => g = g.max(ct),
+                    _ => (),
+                };
+            }
         }
-
-        sum += max.red * max.blue * max.green;
+        sum += r * g * b;
     }
     sum
 }

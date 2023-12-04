@@ -15,30 +15,28 @@ pub fn part1(input: &str) -> u32 {
 fn str_to_v(s: &str) -> Option<u32> {
     if let Some(d) = s.chars().next().unwrap().to_digit(10) {
         Some(d)
+    } else if s.starts_with("one") {
+        Some(1)
+    } else if s.starts_with("two") {
+        Some(2)
+    } else if s.starts_with("three") {
+        Some(3)
+    } else if s.starts_with("four") {
+        Some(4)
+    } else if s.starts_with("five") {
+        Some(5)
+    } else if s.starts_with("six") {
+        Some(6)
+    } else if s.starts_with("seven") {
+        Some(7)
+    } else if s.starts_with("eight") {
+        Some(8)
+    } else if s.starts_with("nine") {
+        Some(9)
+    } else if s.starts_with("zero") {
+        Some(0)
     } else {
-        if s.starts_with("one") {
-            Some(1)
-        } else if s.starts_with("two") {
-            Some(2)
-        } else if s.starts_with("three") {
-            Some(3)
-        } else if s.starts_with("four") {
-            Some(4)
-        } else if s.starts_with("five") {
-            Some(5)
-        } else if s.starts_with("six") {
-            Some(6)
-        } else if s.starts_with("seven") {
-            Some(7)
-        } else if s.starts_with("eight") {
-            Some(8)
-        } else if s.starts_with("nine") {
-            Some(9)
-        } else if s.starts_with("zero") {
-            Some(0)
-        } else {
-            None
-        }
+        None
     }
 }
 
