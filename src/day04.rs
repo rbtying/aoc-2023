@@ -3,7 +3,7 @@ use crate::prelude::*;
 pub fn part1(input: &str) -> usize {
     let mut sum = 0;
     for line in input.lines() {
-        let (_, line): (&str, &str) = parse_split_once(line, ": ");
+        let (_, line) = split1(line, ": ");
         let (lhs, rhs) = split1(line, " | ");
         let winners: HashSet<usize> = lhs.split_whitespace().map(parse1).collect();
         let mine: HashSet<usize> = rhs.split_whitespace().map(parse1).collect();
@@ -24,7 +24,7 @@ pub fn part2(input: &str) -> usize {
 
     for (card_num, line) in input.lines().enumerate() {
         let card_num = card_num + 1;
-        let (_, line): (&str, &str) = parse_split_once(line, ": ");
+        let (_, line) = split1(line, ": ");
         let (lhs, rhs) = split1(line, " | ");
         let winners: HashSet<usize> = lhs.split_whitespace().map(parse1).collect();
         let mine: HashSet<usize> = rhs.split_whitespace().map(parse1).collect();
