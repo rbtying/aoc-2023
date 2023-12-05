@@ -78,6 +78,23 @@ pub fn part2(input: &str) -> isize {
     v.into_iter().map(|x| *x.start()).min().unwrap()
 }
 
+pub fn part2dumb(input: &str) -> isize {
+    let (seed_str, input) = split1(input, "\n\n");
+    let seed_str = split1(seed_str, ": ").1;
+
+    let seeds = seed_str.split_whitespace().map(parse1).collect::<Vec<isize>>();
+    let mut v = vec![];
+    for chunk in seeds.chunks(2) {
+        v.extend(chunk[0]..=chunk[0] + chunk[1]);
+    }
+    for map in input.split("\n\n") {
+        let map = parse_group(map);
+        v = v.into_iter().map(|s| apply_map(&map, s)).collect();
+    }
+
+    v.into_iter().min().unwrap()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -134,5 +151,11 @@ humidity-to-location map:
     #[test]
     fn part2_input() {
         assert_eq!(part2(&read_day_input(std::module_path!())), 37384986);
+    }
+
+    #[ignore]
+    #[test]
+    fn part2_input_dumb() {
+        assert_eq!(part2dumb(&read_day_input(std::module_path!())), 37384986);
     }
 }
