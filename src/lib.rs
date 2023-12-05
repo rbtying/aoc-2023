@@ -11,6 +11,7 @@ pub mod prelude {
     pub use std::fs;
     pub use std::io::{BufRead, BufReader, BufWriter, Read, Write};
     pub use std::iter::IntoIterator;
+    pub use std::ops::*;
     pub use std::str::FromStr;
 
     pub use defaultmap::*;
