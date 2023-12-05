@@ -43,8 +43,7 @@ fn apply_map2(
                 .into_iter()
                 .flat_map(|int| {
                     match compute_overlaps(int, *source_start..=source_start + range_len) {
-                        OverlapResult::Adjacent { a, .. }
-                        | OverlapResult::NonOverlapping { a, .. } => {
+                        OverlapResult::NonOverlapping { a, .. } => {
                             vec![a]
                         }
                         OverlapResult::Overlapping { overlap, a, .. } => {
@@ -82,7 +81,10 @@ pub fn part2dumb(input: &str) -> isize {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;
 
-    let seeds = seed_str.split_whitespace().map(parse1).collect::<Vec<isize>>();
+    let seeds = seed_str
+        .split_whitespace()
+        .map(parse1)
+        .collect::<Vec<isize>>();
     let mut v = vec![];
     for chunk in seeds.chunks(2) {
         v.extend(chunk[0]..=chunk[0] + chunk[1]);

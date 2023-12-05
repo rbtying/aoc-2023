@@ -1,4 +1,4 @@
-use std::ops::RangeInclusive;
+use std::{fmt::Debug, ops::RangeInclusive};
 
 /// Converts from (base, len) to base..=base+len
 pub fn interval_base_and_len_to_range((base, len): (isize, isize)) -> RangeInclusive<isize> {
@@ -24,12 +24,9 @@ pub fn overlaps_nontrivial(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -
     e < f
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum OverlapResult {
     NonOverlapping {
-        a: RangeInclusive<isize>,
-        b: RangeInclusive<isize>,
-    },
-    Adjacent {
         a: RangeInclusive<isize>,
         b: RangeInclusive<isize>,
     },
@@ -45,22 +42,22 @@ pub fn compute_overlaps(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -> O
     let e = a.start().max(b.start());
     let f = a.end().min(b.end());
 
-    if e < f {
+    if e <= f {
         let mut a_nonoverlapping = vec![];
 
-        if a.start() < e {
-            a_nonoverlapping.push(*a.start()..=*e);
+        if *a.start() < e - 1 {
+            a_nonoverlapping.push(*a.start()..=e - 1);
         }
-        if a.end() > f {
-            a_nonoverlapping.push(*f..=*a.end());
+        if *a.end() > f + 1 {
+            a_nonoverlapping.push(f + 1..=*a.end());
         }
 
         let mut b_nonoverlapping = vec![];
-        if b.start() < e {
-            b_nonoverlapping.push(*b.start()..=*e);
+        if *b.start() < e - 1 {
+            b_nonoverlapping.push(*b.start()..=e - 1);
         }
-        if b.end() > f {
-            b_nonoverlapping.push(*f..=*b.end());
+        if *b.end() > f + 1 {
+            b_nonoverlapping.push(f + 1..=*b.end());
         }
 
         OverlapResult::Overlapping {
@@ -68,9 +65,122 @@ pub fn compute_overlaps(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -> O
             a: a_nonoverlapping,
             b: b_nonoverlapping,
         }
-    } else if e == f {
-        OverlapResult::Adjacent { a, b }
     } else {
         OverlapResult::NonOverlapping { a, b }
+    }
+}
+
+pub fn merge_overlaps<T: Clone + Debug>(
+    mut intervals: Vec<(RangeInclusive<isize>, T)>,
+    reduce: impl Fn(T, T) -> T,
+) -> Vec<(RangeInclusive<isize>, T)> {
+    intervals.sort_by_key(|(r, _)| -r.start());
+
+    let mut new_intervals = Vec::with_capacity(intervals.len());
+
+    while let Some((next, next_v)) = intervals.pop() {
+        match new_intervals.last_mut() {
+            None => new_intervals.push((next, next_v)),
+            // Next interval starts after the start of the current interval
+            Some((prev, prev_v)) if next.start() >= prev.start() => {
+                match compute_overlaps(prev.clone(), next.clone()) {
+                    OverlapResult::NonOverlapping { .. } => new_intervals.push((next, next_v)),
+                    OverlapResult::Overlapping { overlap, a, b } => {
+                        let prev_v = prev_v.clone();
+                        new_intervals.pop();
+                        let mut to_add = vec![];
+
+                        to_add.extend(a.into_iter().map(|r| (r, prev_v.clone())));
+                        to_add.push((overlap, reduce(prev_v.clone(), next_v.clone())));
+                        to_add.extend(b.into_iter().map(|r| (r, next_v.clone())));
+
+                        to_add.sort_by_key(|(r, _)| *r.start());
+                        new_intervals.extend(to_add);
+                    }
+                }
+            }
+            // Next interval starts *before* the start of the current interval,
+            // so we need to pop items until that's no longer true.
+            Some(_) => {
+                let start_value = *next.start();
+
+                while let Some(p) = new_intervals.last() {
+                    if *p.0.start() < start_value {
+                        break;
+                    } else {
+                        intervals.extend(new_intervals.pop());
+                    }
+                }
+                intervals.push((next, next_v));
+            }
+        }
+    }
+
+    new_intervals
+}
+
+pub fn collapse_adjacent<T: Eq>(
+    iter: impl IntoIterator<Item = (RangeInclusive<isize>, T)>,
+) -> Vec<(RangeInclusive<isize>, T)> {
+    let mut ret: Vec<(RangeInclusive<isize>, T)> = vec![];
+
+    for (new_range, new_v) in iter {
+        match ret.last_mut() {
+            Some((range, v)) if *v == new_v => {
+                *range = *range.start().min(new_range.start())..=*range.end().max(new_range.end())
+            }
+            None | Some(_) => ret.push((new_range, new_v)),
+        }
+    }
+
+    ret
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_merge_overlaps() {
+        let intervals = vec![(0..=5, 0), (3..=8, 1), (20..=25, 2)];
+        assert_eq!(
+            merge_overlaps(intervals.clone(), |a, b| a.min(b)),
+            vec![(0..=2, 0), (3..=5, 0), (6..=8, 1), (20..=25, 2)]
+        );
+        assert_eq!(
+            collapse_adjacent(merge_overlaps(intervals, |a, b| a.min(b))),
+            vec![(0..=5, 0), (6..=8, 1), (20..=25, 2)]
+        );
+
+        let intervals = vec![(0..=5, 0), (0..=8, 1), (-10..=3, 2)];
+        assert_eq!(
+            merge_overlaps(intervals, |a, b| a.min(b)),
+            vec![(-10..=-1, 2), (0..=3, 0), (4..=5, 0), (6..=8, 1),]
+        );
+    }
+
+    #[test]
+    fn test_find_overlaps() {
+        assert_eq!(
+            compute_overlaps(0..=5, 3..=8),
+            OverlapResult::Overlapping {
+                overlap: 3..=5,
+                a: vec![0..=2],
+                b: vec![6..=8],
+            }
+        );
+        assert_eq!(
+            compute_overlaps(0..=5, 6..=8),
+            OverlapResult::NonOverlapping { a: 0..=5, b: 6..=8 }
+        );
+
+        assert_eq!(
+            compute_overlaps(0..=8, 3..=5),
+            OverlapResult::Overlapping {
+                overlap: 3..=5,
+                a: vec![0..=2, 6..=8],
+                b: vec![],
+            }
+        );
     }
 }
