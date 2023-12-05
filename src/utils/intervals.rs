@@ -70,7 +70,7 @@ pub fn compute_overlaps(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -> O
     }
 }
 
-pub fn merge_overlaps<T: Clone + Debug>(
+pub fn merge_overlapping_intervals<T: Clone + Debug>(
     mut intervals: Vec<(RangeInclusive<isize>, T)>,
     reduce: impl Fn(T, T) -> T,
 ) -> Vec<(RangeInclusive<isize>, T)> {
@@ -119,7 +119,7 @@ pub fn merge_overlaps<T: Clone + Debug>(
     new_intervals
 }
 
-pub fn collapse_adjacent<T: Eq>(
+pub fn collapse_adjacent_intervals<T: Eq>(
     iter: impl IntoIterator<Item = (RangeInclusive<isize>, T)>,
 ) -> Vec<(RangeInclusive<isize>, T)> {
     let mut ret: Vec<(RangeInclusive<isize>, T)> = vec![];
@@ -144,17 +144,17 @@ mod tests {
     fn test_merge_overlaps() {
         let intervals = vec![(0..=5, 0), (3..=8, 1), (20..=25, 2)];
         assert_eq!(
-            merge_overlaps(intervals.clone(), |a, b| a.min(b)),
+            merge_overlapping_intervals(intervals.clone(), |a, b| a.min(b)),
             vec![(0..=2, 0), (3..=5, 0), (6..=8, 1), (20..=25, 2)]
         );
         assert_eq!(
-            collapse_adjacent(merge_overlaps(intervals, |a, b| a.min(b))),
+            collapse_adjacent_intervals(merge_overlapping_intervals(intervals, |a, b| a.min(b))),
             vec![(0..=5, 0), (6..=8, 1), (20..=25, 2)]
         );
 
         let intervals = vec![(0..=5, 0), (0..=8, 1), (-10..=3, 2)];
         assert_eq!(
-            merge_overlaps(intervals, |a, b| a.min(b)),
+            merge_overlapping_intervals(intervals, |a, b| a.min(b)),
             vec![(-10..=-1, 2), (0..=3, 0), (4..=5, 0), (6..=8, 1),]
         );
     }
