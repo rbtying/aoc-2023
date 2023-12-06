@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use crate::prelude::*;
 
 pub trait InfallibleFromStr<'a> {
     fn from_str_infallible(s: &'a str) -> Self;
@@ -101,11 +101,14 @@ pub fn drop_prefix<'l>(s: &'l str, prefix: &str) -> &'l str {
     split1(s, prefix).1
 }
 
+pub fn parse_ints(input: &str) -> Vec<isize> {
+    let regex = Regex::new(r"\d+").unwrap();
+    regex.find_iter(input).map(|x| parse1(x.as_str())).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    use crate::prelude::*;
 
     #[test]
     fn test_p3() {

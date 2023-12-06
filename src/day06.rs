@@ -21,16 +21,8 @@ fn solve_quad(time: isize, distance: isize) -> isize {
 
 pub fn part1(input: &str) -> isize {
     let (line1, line2) = split1(input, "\n");
-    let times = split1(line1, ":")
-        .1
-        .split_whitespace()
-        .map(parse1)
-        .collect::<Vec<isize>>();
-    let distances = split1(line2, ":")
-        .1
-        .split_whitespace()
-        .map(parse1)
-        .collect::<Vec<isize>>();
+    let times = parse_ints(line1);
+    let distances = parse_ints(line2);
 
     times
         .into_iter()
@@ -41,8 +33,8 @@ pub fn part1(input: &str) -> isize {
 
 pub fn part2(input: &str) -> isize {
     let (line1, line2) = split1(input, "\n");
-    let time: isize = parse1(&split1(line1, ":").1.replace(' ', ""));
-    let distance: isize = parse1(&split1(line2, ":").1.replace(' ', ""));
+    let time: isize = parse_ints(&line1.replace(' ', ""))[0];
+    let distance: isize = parse_ints(&line2.replace(' ', ""))[0];
     solve_quad(time, distance)
 }
 
