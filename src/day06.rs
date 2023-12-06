@@ -6,6 +6,19 @@ fn solve_simple(time: isize, distance: isize) -> isize {
         .count() as isize
 }
 
+// We can directly solve this quadratic equation using the quadratic formula....
+// But the input was actually brute-force-able and there was no need to do so.
+fn solve_quad(time: isize, distance: isize) -> isize {
+    let a = -1_f64;
+    let b = time as f64;
+    let c = -distance as f64;
+
+    let d = (b * b - 4. * a * c).sqrt();
+    let x1 = (-b + d) / 2.;
+    let x2 = (-b - d) / 2.;
+    (x1 - x2) as isize
+}
+
 pub fn part1(input: &str) -> isize {
     let (line1, line2) = split1(input, "\n");
     let times = split1(line1, ":")
@@ -21,16 +34,16 @@ pub fn part1(input: &str) -> isize {
 
     times
         .into_iter()
-        .zip(distances.into_iter())
+        .zip(distances)
         .map(|(time, distance)| solve_simple(time, distance))
         .product()
 }
 
 pub fn part2(input: &str) -> isize {
     let (line1, line2) = split1(input, "\n");
-    let time: isize = parse1(&split1(line1, ":").1.replace(" ", ""));
-    let distance: isize = parse1(&split1(line2, ":").1.replace(" ", ""));
-    solve_simple(time, distance)
+    let time: isize = parse1(&split1(line1, ":").1.replace(' ', ""));
+    let distance: isize = parse1(&split1(line2, ":").1.replace(' ', ""));
+    solve_quad(time, distance)
 }
 
 #[cfg(test)]
