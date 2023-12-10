@@ -57,16 +57,16 @@ mod tests {
 
     #[test]
     fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 0);
+        assert_eq!(part1(&read_day_input(std::module_path!())), 1980437560);
     }
 
     #[test]
     fn part2_example() {
-        assert_eq!(part2(EXAMPLE), 0);
+        assert_eq!(part2(EXAMPLE), 2);
     }
 
     #[test]
     fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 0);
+        assert_eq!(part2(&read_day_input(std::module_path!())), 977);
     }
 }
