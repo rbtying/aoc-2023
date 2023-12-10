@@ -12,27 +12,17 @@ pub fn part1(input: &str) -> isize {
     }
 
     let mut pos = "AAA";
-    let mut steps = 0;
-    let mut iter = instructions.chars();
-    loop {
-        match iter.next() {
-            Some('L') => {
-                steps += 1;
-                pos = map[pos].0;
-            }
-            Some('R') => {
-                steps += 1;
-                pos = map[pos].1;
-            }
-            None => {
-                iter = instructions.chars();
-            }
+    for (idx, c) in instructions.chars().cycle().enumerate() {
+        pos = match c {
+            'L' => map[pos].0,
+            'R' => map[pos].1,
             _ => unreachable!(),
-        }
+        };
         if pos == "ZZZ" {
-            return steps;
+            return (idx + 1) as isize;
         }
     }
+    unreachable!()
 }
 
 pub fn part2(input: &str) -> isize {
@@ -54,37 +44,22 @@ pub fn part2(input: &str) -> isize {
 
     let mut found_zs = vec![-1isize; pos.len()];
 
-    let mut steps = 0;
-    let mut iter = instructions.chars();
-    loop {
-        match iter.next() {
-            Some('L') => {
-                steps += 1;
-                for (idx, x) in pos.iter_mut().enumerate() {
-                    *x = map[x.as_str()].0.to_string();
-                    if x.ends_with('Z') {
-                        found_zs[idx] = steps;
-                    }
-                }
+    for (steps, c) in instructions.chars().cycle().enumerate() {
+        for (idx, x) in pos.iter_mut().enumerate() {
+            *x = match c {
+                'L' => map[x.as_str()].0.to_string(),
+                'R' => map[x.as_str()].1.to_string(),
+                _ => unreachable!(),
+            };
+            if x.ends_with('Z') && found_zs[idx] < 0 {
+                found_zs[idx] = (steps + 1) as isize;
             }
-            Some('R') => {
-                steps += 1;
-                for (idx, x) in pos.iter_mut().enumerate() {
-                    *x = map[x.as_str()].1.to_string();
-                    if x.ends_with('Z') {
-                        found_zs[idx] = steps;
-                    }
-                }
-            }
-            None => {
-                iter = instructions.chars();
-            }
-            _ => unreachable!(),
         }
         if found_zs.iter().all(|x| *x >= 0) {
-            break found_zs.into_iter().reduce(lcm).unwrap();
+            return found_zs.into_iter().reduce(lcm).unwrap();
         }
     }
+    unreachable!()
 }
 
 #[cfg(test)]
