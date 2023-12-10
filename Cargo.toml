@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 defaultmap = "0.6.0"
-graph-cycles = "0.1.0"
+euclid = "0.22.9"
 memoize = "0.4.1"
 petgraph = "0.6.4"
 regex = "1.10.2"

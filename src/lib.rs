@@ -20,6 +20,8 @@ pub mod prelude {
     pub use std::str::FromStr;
 
     pub use defaultmap::*;
+    pub use euclid::*;
+    pub use petgraph::prelude::*;
     pub use regex::{Regex, RegexBuilder, RegexSet};
 
     pub use crate::utils::*;

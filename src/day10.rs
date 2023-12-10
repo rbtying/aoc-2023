@@ -1,6 +1,4 @@
 use crate::prelude::*;
-use petgraph::graph::Graph;
-use petgraph::visit::EdgeRef;
 
 fn get_loop(input: &str) -> Vec<(isize, isize)> {
     let grid = parse_char_grid(input);
@@ -12,43 +10,36 @@ fn get_loop(input: &str) -> Vec<(isize, isize)> {
 
     for i in i_bounds.clone() {
         for j in j_bounds.clone() {
-            let n = *nodes.entry((i, j)).or_insert_with(|| g.add_node((i, j)));
-            if grid[&(i, j)] == 'S' {
+            let p = (i, j);
+            let n = *nodes.entry(p).or_insert_with(|| g.add_node(p));
+            if grid[&p] == 'S' {
                 s_pos = (i, j);
             }
 
             if "|-LJ7F".find(grid[&(i, j)]).is_some() {
-                let edge = match grid[&(i, j)] {
-                    '|' => ((i - 1, j), (i + 1, j)),
-                    '-' => ((i, j - 1), (i, j + 1)),
-                    'L' => ((i - 1, j), (i, j + 1)),
-                    'J' => ((i - 1, j), (i, j - 1)),
-                    '7' => ((i + 1, j), (i, j - 1)),
-                    'F' => ((i + 1, j), (i, j + 1)),
+                let exits = match grid[&p] {
+                    '|' => [UP, DOWN],
+                    '-' => [LEFT, RIGHT],
+                    'L' => [UP, RIGHT],
+                    'J' => [UP, LEFT],
+                    '7' => [LEFT, DOWN],
+                    'F' => [RIGHT, DOWN],
                     _ => unreachable!(),
                 };
-                let a = *nodes.entry(edge.0).or_insert_with(|| g.add_node(edge.0));
-                let b = *nodes.entry(edge.1).or_insert_with(|| g.add_node(edge.1));
 
-                g.update_edge(n, a, ());
-                g.update_edge(n, b, ());
+                for d in exits {
+                    let dst = point_add(p, d);
+                    let node_dst = *nodes.entry(dst).or_insert_with(|| g.add_node(dst));
+                    g.update_edge(n, node_dst, ());
+                }
             }
         }
     }
 
     let s = nodes[&s_pos];
-
-    // Fix the start edges
-    for e in g.edges(s).map(|e| e.id()).collect::<Vec<_>>() {
-        g.remove_edge(e);
-    }
-
-    for n in g.node_indices().to_owned() {
-        for nn in g.neighbors(n).collect::<Vec<_>>() {
-            if nn == s {
-                g.update_edge(s, n, ());
-            }
-        }
+    let into_s_orig = g.neighbors_directed(s, Incoming).collect::<Vec<_>>();
+    for n in into_s_orig {
+        g.update_edge(s, n, ());
     }
 
     let mut stk = vec![(s, None)];
@@ -92,13 +83,17 @@ pub fn part2(input: &str) -> isize {
     path.push(path[0]);
 
     // Abuse the shoelace theorem to find the total area, then remove the boundary.
-    (path
+    let mut area = path
         .windows(2)
         .map(|w| w[0].0 * w[1].1 - w[0].1 * w[1].0)
         .sum::<isize>()
-        - path_len)
-        / 2
-        + 1
+        / 2;
+    if area < 0 {
+        area = -area;
+    }
+
+    // A = I + B/2 - 1 for lattice polygons
+    area - path_len / 2 + 1
 }
 
 #[cfg(test)]
@@ -119,6 +114,7 @@ LJ..."#;
 .|..|.|..|.
 .L--J.L--J.
 ..........."#;
+
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE), 8);
