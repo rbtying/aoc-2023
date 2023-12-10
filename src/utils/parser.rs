@@ -102,7 +102,7 @@ pub fn drop_prefix<'l>(s: &'l str, prefix: &str) -> &'l str {
 }
 
 pub fn parse_ints(input: &str) -> Vec<isize> {
-    let regex = Regex::new(r"\d+").unwrap();
+    let regex = Regex::new(r"-?\d+").unwrap();
     regex.find_iter(input).map(|x| parse1(x.as_str())).collect()
 }
 
