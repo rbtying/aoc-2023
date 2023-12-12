@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+cached = "0.46.1"
 defaultmap = "0.6.0"
 euclid = "0.22.9"
-memoize = "0.4.1"
 petgraph = "0.6.4"
 regex = "1.10.2"

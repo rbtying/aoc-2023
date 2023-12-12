@@ -6,17 +6,17 @@ pub fn part1(input: &str) -> isize {
         let (data, lens) = split1(line, " ");
         let lens = parse_ints(lens);
 
-        s += solve_recursive(
-            Box::leak(Box::new(data.chars().collect::<Vec<_>>())),
-            Box::leak(Box::new(lens)),
-            None,
-        );
+        s += solve_recursive(&data.chars().collect::<Vec<_>>(), &lens, None);
     }
     s
 }
 
-#[memoize::memoize]
-fn solve_recursive(s: &'static [char], l: &'static [isize], in_seq: Option<isize>) -> isize {
+#[cached::proc_macro::cached(
+    type = "cached::UnboundCache::<(Vec<char>, Vec<isize>, isize), isize>",
+    create = "{cached::UnboundCache::new()}",
+    convert = "{(s.to_vec(), l.to_vec(), in_seq.unwrap_or(0))}"
+)]
+fn solve_recursive(s: &[char], l: &[isize], in_seq: Option<isize>) -> isize {
     match in_seq {
         Some(v) if !l.is_empty() => {
             if s.is_empty() {
@@ -31,7 +31,7 @@ fn solve_recursive(s: &'static [char], l: &'static [isize], in_seq: Option<isize
                 if ".?".find(s[0]).is_some() && v == l[0] {
                     sum += solve_recursive(&s[1..], &l[1..], None);
                 }
-                if "#?".find(s[0]).is_some() {
+                if "#?".find(s[0]).is_some() && v < l[0] {
                     sum += solve_recursive(&s[1..], l, Some(v + 1));
                 }
                 sum
@@ -73,11 +73,7 @@ pub fn part2(input: &str) -> isize {
             new_lens.extend(lens.iter().copied());
         }
 
-        s += solve_recursive(
-            Box::leak(Box::new(new_data.chars().collect::<Vec<_>>())),
-            Box::leak(Box::new(new_lens)),
-            None,
-        );
+        s += solve_recursive(&new_data.chars().collect::<Vec<_>>(), &new_lens, None);
     }
     s
 }
