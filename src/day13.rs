@@ -1,19 +1,5 @@
 use crate::prelude::*;
 
-fn check_match(
-    a: (isize, isize),
-    b: (isize, isize),
-    grid: &DefaultHashMap<(isize, isize), char>,
-) -> isize {
-    let a = grid[&a];
-    let b = grid[&b];
-    if a != '\0' && b != '\0' && a != b {
-        1
-    } else {
-        0
-    }
-}
-
 fn solve(input: &str, smudges: isize) -> isize {
     let mut s = 0;
     for pattern in input.split("\n\n") {
@@ -23,12 +9,13 @@ fn solve(input: &str, smudges: isize) -> isize {
         let (i_bounds, j_bounds) = get_grid_bounds(&grid);
 
         for i in 1..i_bounds.end {
-            // we evaluate between i and i-1
             let n = i.min(i_bounds.end - i - 1);
             let mut mismatches = 0;
             for r in 0..=n {
-                for j in j_bounds.clone() {
-                    mismatches += check_match((i - r - 1, j), (i + r, j), &grid);
+                for (a, b) in get_grid_row(&grid, i - r - 1).zip(get_grid_row(&grid, i + r)) {
+                    if a != b && a != '\0' && b != '\0' {
+                        mismatches += 1;
+                    }
                 }
             }
             if mismatches == smudges {
@@ -37,12 +24,13 @@ fn solve(input: &str, smudges: isize) -> isize {
         }
 
         for j in 1..j_bounds.end {
-            // we evaluate between i and i-1
             let n = j.min(j_bounds.end - j - 1);
             let mut mismatches = 0;
             for r in 0..=n {
-                for i in i_bounds.clone() {
-                    mismatches += check_match((i, j - r - 1), (i, j + r), &grid);
+                for (a, b) in get_grid_col(&grid, j - r - 1).zip(get_grid_col(&grid, j + r)) {
+                    if a != b && a != '\0' && b != '\0' {
+                        mismatches += 1;
+                    }
                 }
             }
             if mismatches == smudges {

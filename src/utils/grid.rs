@@ -28,6 +28,18 @@ pub fn get_grid_bounds(g: &IGrid2D) -> (Range<isize>, Range<isize>) {
     (min.0..max.0 + 1, min.1..max.1 + 1)
 }
 
+pub fn get_grid_row(g: &IGrid2D, i: isize) -> impl Iterator<Item = char> + '_ {
+    let (_, j_bounds) = get_grid_bounds(g);
+
+    j_bounds.into_iter().map(move |j| g[&(i, j)])
+}
+
+pub fn get_grid_col(g: &IGrid2D, j: isize) -> impl Iterator<Item = char> + '_ {
+    let (i_bounds, _) = get_grid_bounds(g);
+
+    i_bounds.into_iter().map(move |i| g[&(i, j)])
+}
+
 pub fn print_char_grid(g: &IGrid2D) {
     let (i_bounds, j_bounds) = get_grid_bounds(g);
     for i in i_bounds {
