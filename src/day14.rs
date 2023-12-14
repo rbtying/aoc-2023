@@ -38,30 +38,22 @@ fn score(g: &IGrid2D) -> isize {
 pub fn part2(input: &str) -> isize {
     let mut g = parse_char_grid(input);
     g.retain(|_, v| *v != '.');
-    let mut h = vec![];
 
-    let target = 1000000000;
-    for cycle in 0..target {
-        for _ in 0..4 {
-            fall_north(&mut g);
-            rotate_grid_inplace_cw(&mut g);
-        }
-        for (offset, g2) in h.iter().enumerate() {
-            if g == *g2 {
-                // Found recurrence
-                let n = cycle - offset;
-                // solve target = offset + recurrence * n + offset2
-                // target - offset = recurrence * n + offset2
-                let offset2 = (target - offset) % n;
-                let t = &h[offset + offset2 - 1];
-                // score
-                return score(t);
+    let res = find_cycle_equals(
+        g.clone(),
+        |g2| {
+            for _ in 0..4 {
+                fall_north(g2);
+                rotate_grid_inplace_cw(g2);
             }
-        }
-
-        h.push(g.clone());
-    }
-    unreachable!()
+        },
+        |g2| {
+            let mut h = FnvHasher::default();
+            g2.hash(&mut h);
+            (h.finish(), score(&g2))
+        },
+    );
+    res[1000000000 + 1].1
 }
 
 #[cfg(test)]

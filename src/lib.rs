@@ -15,16 +15,18 @@ pub mod day14;
 
 mod utils;
 pub mod prelude {
+    pub use std::borrow::*;
     pub use std::cmp::*;
     pub use std::collections::*;
     pub use std::fs;
+    pub use std::hash::*;
     pub use std::io::{BufRead, BufReader, BufWriter, Read, Write};
-    pub use std::iter::IntoIterator;
+    pub use std::iter::{FromIterator, IntoIterator};
     pub use std::ops::*;
     pub use std::str::FromStr;
 
-    pub use defaultmap::*;
     pub use euclid::*;
+    pub use fnv::*;
     pub use petgraph::prelude::*;
     pub use regex::{Regex, RegexBuilder, RegexSet};
 

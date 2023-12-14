@@ -20,7 +20,7 @@ pub fn part1(input: &str) -> usize {
 
 pub fn part2(input: &str) -> usize {
     let mut num_cards_processed = 0;
-    let mut num_duplicates: DefaultHashMap<usize, usize> = DefaultHashMap::new();
+    let mut num_duplicates: DefaultHashMap<usize, usize> = DefaultHashMap::default();
 
     for (card_num, line) in input.lines().enumerate() {
         let card_num = card_num + 1;

@@ -3,7 +3,7 @@ use crate::prelude::*;
 pub fn part1(input: &str) -> isize {
     let (instructions, lookups) = split1(input, "\n\n");
 
-    let mut map = DefaultHashMap::new();
+    let mut map = DefaultHashMap::default();
 
     for line in lookups.lines() {
         let (from, leftright) = split1(line, " = (");
@@ -28,7 +28,7 @@ pub fn part1(input: &str) -> isize {
 pub fn part2(input: &str) -> isize {
     let (instructions, lookups) = split1(input, "\n\n");
 
-    let mut map = DefaultHashMap::new();
+    let mut map = DefaultHashMap::default();
 
     for line in lookups.lines() {
         let (from, leftright) = split1(line, " = (");
@@ -36,30 +36,25 @@ pub fn part2(input: &str) -> isize {
         map[from] = (left, right);
     }
 
-    let mut pos = map
-        .keys()
+    map.keys()
         .filter(|k| k.ends_with('A'))
-        .map(|x| x.to_string())
-        .collect::<Vec<_>>();
-
-    let mut found_zs = vec![-1isize; pos.len()];
-
-    for (steps, c) in instructions.chars().cycle().enumerate() {
-        for (idx, x) in pos.iter_mut().enumerate() {
-            *x = match c {
-                'L' => map[x.as_str()].0.to_string(),
-                'R' => map[x.as_str()].1.to_string(),
-                _ => unreachable!(),
-            };
-            if x.ends_with('Z') && found_zs[idx] < 0 {
-                found_zs[idx] = (steps + 1) as isize;
-            }
-        }
-        if found_zs.iter().all(|x| *x >= 0) {
-            return found_zs.into_iter().reduce(lcm).unwrap();
-        }
-    }
-    unreachable!()
+        .map(|x| {
+            find_cycle_generic(
+                (instructions.chars().cycle(), x.to_string()),
+                |(iter, pos)| {
+                    *pos = match iter.next().unwrap() {
+                        'L' => map[pos.as_str()].0.to_string(),
+                        'R' => map[pos.as_str()].1.to_string(),
+                        _ => unreachable!(),
+                    };
+                },
+                |&(_, ref pos)| pos.to_string(),
+                |a, _| a.ends_with("Z"),
+            )
+            .cycle_len
+        })
+        .reduce(lcm)
+        .unwrap()
 }
 
 #[cfg(test)]

@@ -117,12 +117,13 @@ mod tests {
         let (num, s) = split1(s, ": ");
         let num: u32 = parse1(num);
 
-        let mut m: DefaultHashMap<&str, u32> = DefaultHashMap::new();
+        let mut m: DefaultHashMap<&str, u32> = DefaultHashMap::default();
 
         for view in s.split("; ") {
             for x in view.split(", ") {
                 let (n, color): (u32, &str) = parse2(x.split(' '));
-                m.insert(color, m[color] + n);
+                let c = m[color];
+                m.insert(color, c + n);
             }
         }
 
