@@ -28,6 +28,36 @@ pub fn get_grid_bounds(g: &IGrid2D) -> (Range<isize>, Range<isize>) {
     (min.0..max.0 + 1, min.1..max.1 + 1)
 }
 
+pub fn rotate_grid_ccw(g: &IGrid2D) -> IGrid2D {
+    let mut rotated = IGrid2D::default();
+    let (i_bounds, _j_bounds) = get_grid_bounds(g);
+
+    for (pt, c) in g.iter() {
+        let pt = (
+            i_bounds.end - pt.1 - 1, // -j => +i
+            pt.0,                // +i => +j
+        );
+        rotated.insert(pt, *c);
+    }
+
+    rotated
+}
+
+pub fn rotate_grid_cw(g: &IGrid2D) -> IGrid2D {
+    let mut rotated = IGrid2D::default();
+    let (i_bounds, _j_bounds) = get_grid_bounds(g);
+
+    for (pt, c) in g.iter() {
+        let pt = (
+            pt.1,                    // +j => +i
+            i_bounds.end - pt.0 - 1, // -i => +j
+        );
+        rotated.insert(pt, *c);
+    }
+
+    rotated
+}
+
 pub fn get_grid_row(g: &IGrid2D, i: isize) -> impl Iterator<Item = char> + '_ {
     let (_, j_bounds) = get_grid_bounds(g);
 
