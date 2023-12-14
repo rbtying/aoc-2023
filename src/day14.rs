@@ -1,28 +1,24 @@
 use crate::prelude::*;
 
-fn fall_north(grid: &IGrid2D) -> IGrid2D {
-    let mut res = IGrid2D::default();
-
-    let mut pts = grid.keys().copied().collect::<Vec<_>>();
+fn fall_north(grid: &mut IGrid2D) {
+    let mut pts = grid.drain().collect::<Vec<_>>();
     pts.sort();
 
-    for mut p in pts {
-        if grid[&p] == '#' {
-            res.insert(p, '#');
-        } else if grid[&p] == 'O' {
-            while res[&(p.0 - 1, p.1)] == '.' || res[&(p.0 - 1, p.1)] == '\0' && p.0 > 0 {
+    for (mut p, c) in pts {
+        if c == '#' {
+            grid.insert(p, '#');
+        } else if c == 'O' {
+            while grid[&(p.0 - 1, p.1)] == '.' || grid[&(p.0 - 1, p.1)] == '\0' && p.0 > 0 {
                 p.0 -= 1;
             }
-            res.insert(p, 'O');
+            grid.insert(p, 'O');
         }
     }
-
-    res
 }
 
 pub fn part1(input: &str) -> isize {
-    let g = parse_char_grid(input);
-    let g = fall_north(&g);
+    let mut g = parse_char_grid(input);
+    fall_north(&mut g);
     score(&g)
 }
 
@@ -47,8 +43,8 @@ pub fn part2(input: &str) -> isize {
     let target = 1000000000;
     for cycle in 0..target {
         for _ in 0..4 {
-            g = fall_north(&g);
-            g = rotate_grid_cw(&g);
+            fall_north(&mut g);
+            rotate_grid_inplace_cw(&mut g);
         }
         for (offset, g2) in h.iter().enumerate() {
             if g == *g2 {

@@ -35,7 +35,7 @@ pub fn rotate_grid_ccw(g: &IGrid2D) -> IGrid2D {
     for (pt, c) in g.iter() {
         let pt = (
             i_bounds.end - pt.1 - 1, // -j => +i
-            pt.0,                // +i => +j
+            pt.0,                    // +i => +j
         );
         rotated.insert(pt, *c);
     }
@@ -56,6 +56,30 @@ pub fn rotate_grid_cw(g: &IGrid2D) -> IGrid2D {
     }
 
     rotated
+}
+
+pub fn rotate_grid_inplace_cw(g: &mut IGrid2D) {
+    let (i_bounds, _j_bounds) = get_grid_bounds(g);
+
+    for (pt, c) in g.drain().collect::<Vec<_>>() {
+        let pt = (
+            pt.1,                    // +j => +i
+            i_bounds.end - pt.0 - 1, // -i => +j
+        );
+        g.insert(pt, c);
+    }
+}
+
+pub fn rotate_grid_inplace_ccw(g: &mut IGrid2D) {
+    let (i_bounds, _j_bounds) = get_grid_bounds(g);
+
+    for (pt, c) in g.drain().collect::<Vec<_>>() {
+        let pt = (
+            i_bounds.end - pt.1 - 1, // -j => +i
+            pt.0,                    // +i => +j
+        );
+        g.insert(pt, c);
+    }
 }
 
 pub fn get_grid_row(g: &IGrid2D, i: isize) -> impl Iterator<Item = char> + '_ {
