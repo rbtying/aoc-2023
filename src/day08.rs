@@ -48,8 +48,8 @@ pub fn part2(input: &str) -> isize {
                         _ => unreachable!(),
                     };
                 },
-                |&(_, ref pos)| pos.to_string(),
-                |a, _| a.ends_with("Z"),
+                |(_, pos)| pos.to_string(),
+                |a, _| a.ends_with('Z'),
             )
             .cycle_len
         })

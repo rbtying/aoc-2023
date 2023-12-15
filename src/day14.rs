@@ -50,7 +50,7 @@ pub fn part2(input: &str) -> isize {
         |g2| {
             let mut h = FnvHasher::default();
             g2.hash(&mut h);
-            (h.finish(), score(&g2))
+            (h.finish(), score(g2))
         },
     );
     res[1000000000 + 1].1

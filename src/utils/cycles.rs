@@ -105,6 +105,5 @@ pub fn find_cycle_equals<S, K: Eq + Hash>(
 
         history.insert(k, idx);
     }
-
-    loop {}
+    unreachable!()
 }
