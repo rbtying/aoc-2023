@@ -25,16 +25,16 @@ pub fn part2(input: &str) -> isize {
         if s.contains('-') {
             let label = &s[0..s.len() - 1];
             let h = hash_fn(label) as usize;
-            let v = boxes.get_mut(h).unwrap();
+            let v = &mut boxes[h];
             if let Some(p) = v.iter().position(|s| s.0 == label) {
                 v.remove(p);
             }
         } else {
             let (label, focal): (&str, isize) = parse_split_once(s, "=");
             let h = hash_fn(label) as usize;
-            let v = boxes.get_mut(h).unwrap();
+            let v = &mut boxes[h];
             if let Some(p) = v.iter().position(|s| s.0 == label) {
-                v.get_mut(p).unwrap().1 = focal;
+                v[p].1 = focal;
             } else {
                 v.push((label.to_string(), focal));
             }
