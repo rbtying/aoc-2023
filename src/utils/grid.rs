@@ -1,6 +1,7 @@
 use crate::prelude::*;
 
 pub type IGrid2D = DefaultHashMap<(isize, isize), char>;
+pub type Point = (isize, isize);
 
 pub fn parse_char_grid(input: &str) -> IGrid2D {
     let mut g = IGrid2D::default();
