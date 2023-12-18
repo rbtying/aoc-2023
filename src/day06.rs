@@ -1,14 +1,14 @@
 use crate::prelude::*;
 
-fn solve_simple(time: isize, distance: isize) -> isize {
+fn solve_simple(time: i64, distance: i64) -> i64 {
     (0..=time)
         .filter(|hold| hold * (time - hold) > distance)
-        .count() as isize
+        .count() as i64
 }
 
 // We can directly solve this quadratic equation using the quadratic formula....
 // But the input was actually brute-force-able and there was no need to do so.
-fn solve_quad(time: isize, distance: isize) -> isize {
+fn solve_quad(time: i64, distance: i64) -> i64 {
     let a = -1_f64;
     let b = time as f64;
     let c = -distance as f64;
@@ -16,10 +16,10 @@ fn solve_quad(time: isize, distance: isize) -> isize {
     let d = (b * b - 4. * a * c).sqrt();
     let x1 = (-b + d) / 2.;
     let x2 = (-b - d) / 2.;
-    (x1 - x2) as isize
+    (x1 - x2) as i64
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let (line1, line2) = split1(input, "\n");
     let times = parse_ints(line1);
     let distances = parse_ints(line2);
@@ -31,10 +31,10 @@ pub fn part1(input: &str) -> isize {
         .product()
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let (line1, line2) = split1(input, "\n");
-    let time: isize = parse_ints(&line1.replace(' ', ""))[0];
-    let distance: isize = parse_ints(&line2.replace(' ', ""))[0];
+    let time: i64 = parse_ints(&line1.replace(' ', ""))[0];
+    let distance: i64 = parse_ints(&line2.replace(' ', ""))[0];
     solve_quad(time, distance)
 }
 

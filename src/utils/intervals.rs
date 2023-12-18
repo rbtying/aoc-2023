@@ -1,24 +1,24 @@
 use std::{fmt::Debug, ops::RangeInclusive};
 
 /// Converts from (base, len) to base..=base+len
-pub fn interval_base_and_len_to_range((base, len): (isize, isize)) -> RangeInclusive<isize> {
+pub fn interval_base_and_len_to_range((base, len): (i64, i64)) -> RangeInclusive<i64> {
     base..=base + len
 }
 
 /// Converts from start..=end to (start, end-start)
-pub fn range_to_base_and_len(interval: RangeInclusive<isize>) -> (isize, isize) {
+pub fn range_to_base_and_len(interval: RangeInclusive<i64>) -> (i64, i64) {
     (*interval.start(), interval.end() - interval.start())
 }
 
 /// Returns true if the intervals overlaps, including if they share an endpoint.
-pub fn overlaps(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -> bool {
+pub fn overlaps(a: RangeInclusive<i64>, b: RangeInclusive<i64>) -> bool {
     let e = a.start().max(b.start());
     let f = a.end().min(b.end());
     e <= f
 }
 
 /// Returns true if the intervals overlap with a nontrivial interval.
-pub fn overlaps_nontrivial(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -> bool {
+pub fn overlaps_nontrivial(a: RangeInclusive<i64>, b: RangeInclusive<i64>) -> bool {
     let e = a.start().max(b.start());
     let f = a.end().min(b.end());
     e < f
@@ -27,18 +27,18 @@ pub fn overlaps_nontrivial(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum OverlapResult {
     NonOverlapping {
-        a: RangeInclusive<isize>,
-        b: RangeInclusive<isize>,
+        a: RangeInclusive<i64>,
+        b: RangeInclusive<i64>,
     },
     Overlapping {
-        overlap: RangeInclusive<isize>,
-        a: Vec<RangeInclusive<isize>>,
-        b: Vec<RangeInclusive<isize>>,
+        overlap: RangeInclusive<i64>,
+        a: Vec<RangeInclusive<i64>>,
+        b: Vec<RangeInclusive<i64>>,
     },
 }
 
 #[allow(clippy::comparison_chain)]
-pub fn compute_overlaps(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -> OverlapResult {
+pub fn compute_overlaps(a: RangeInclusive<i64>, b: RangeInclusive<i64>) -> OverlapResult {
     let e = a.start().max(b.start());
     let f = a.end().min(b.end());
 
@@ -71,9 +71,9 @@ pub fn compute_overlaps(a: RangeInclusive<isize>, b: RangeInclusive<isize>) -> O
 }
 
 pub fn merge_overlapping_intervals<T: Clone + Debug>(
-    mut intervals: Vec<(RangeInclusive<isize>, T)>,
+    mut intervals: Vec<(RangeInclusive<i64>, T)>,
     reduce: impl Fn(T, T) -> T,
-) -> Vec<(RangeInclusive<isize>, T)> {
+) -> Vec<(RangeInclusive<i64>, T)> {
     intervals.sort_by_key(|(r, _)| -r.start());
 
     let mut new_intervals = Vec::with_capacity(intervals.len());
@@ -120,9 +120,9 @@ pub fn merge_overlapping_intervals<T: Clone + Debug>(
 }
 
 pub fn collapse_adjacent_intervals<T: Eq>(
-    iter: impl IntoIterator<Item = (RangeInclusive<isize>, T)>,
-) -> Vec<(RangeInclusive<isize>, T)> {
-    let mut ret: Vec<(RangeInclusive<isize>, T)> = vec![];
+    iter: impl IntoIterator<Item = (RangeInclusive<i64>, T)>,
+) -> Vec<(RangeInclusive<i64>, T)> {
+    let mut ret: Vec<(RangeInclusive<i64>, T)> = vec![];
 
     for (new_range, new_v) in iter {
         match ret.last_mut() {

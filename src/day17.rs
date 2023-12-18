@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-fn solve(input: &str, min_dist: isize, max_dist: isize) -> isize {
+fn solve(input: &str, min_dist: i64, max_dist: i64) -> i64 {
     let grid = parse_char_grid(input);
 
     let start_pos = (0, 0);
@@ -9,9 +9,9 @@ fn solve(input: &str, min_dist: isize, max_dist: isize) -> isize {
 
     #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord)]
     struct S {
-        cost: isize,
-        pos: (isize, isize),
-        from_dir: (isize, isize),
+        cost: i64,
+        pos: (i64, i64),
+        from_dir: (i64, i64),
     }
 
     let mut q = BinaryHeap::new();
@@ -20,7 +20,7 @@ fn solve(input: &str, min_dist: isize, max_dist: isize) -> isize {
         pos: start_pos,
         from_dir: (0, 0),
     }));
-    let mut dist = DefaultHashMap::new(std::isize::MAX);
+    let mut dist = DefaultHashMap::new(std::i64::MAX);
     dist[(start_pos, (0, 0))] = 0;
 
     while let Some(Reverse(S {
@@ -44,7 +44,7 @@ fn solve(input: &str, min_dist: isize, max_dist: isize) -> isize {
                 let c = grid[p];
 
                 if let Some(c) = c.to_digit(10) {
-                    cost_sum += c as isize;
+                    cost_sum += c as i64;
                     if n < min_dist {
                         continue;
                     }
@@ -64,11 +64,11 @@ fn solve(input: &str, min_dist: isize, max_dist: isize) -> isize {
     unreachable!()
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     solve(input, 0, 3)
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     solve(input, 4, 10)
 }
 

@@ -1,4 +1,4 @@
-pub fn gcd(mut u: isize, mut v: isize) -> isize {
+pub fn gcd(mut u: i64, mut v: i64) -> i64 {
     if u == 0 {
         return v;
     }
@@ -28,7 +28,7 @@ pub fn gcd(mut u: isize, mut v: isize) -> isize {
     u << shift
 }
 
-pub fn lcm(u: isize, v: isize) -> isize {
+pub fn lcm(u: i64, v: i64) -> i64 {
     u * (v / gcd(u, v))
 }
 

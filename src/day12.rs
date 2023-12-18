@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
         let (data, lens) = split1(line, " ");
@@ -12,11 +12,11 @@ pub fn part1(input: &str) -> isize {
 }
 
 #[cached::proc_macro::cached(
-    type = "cached::UnboundCache::<(Vec<char>, Vec<isize>, isize), isize>",
+    type = "cached::UnboundCache::<(Vec<char>, Vec<i64>, i64), i64>",
     create = "{cached::UnboundCache::new()}",
     convert = "{(s.to_vec(), l.to_vec(), in_seq.unwrap_or(0))}"
 )]
-fn solve_recursive(s: &[char], l: &[isize], in_seq: Option<isize>) -> isize {
+fn solve_recursive(s: &[char], l: &[i64], in_seq: Option<i64>) -> i64 {
     match in_seq {
         Some(v) if !l.is_empty() => {
             if s.is_empty() {
@@ -59,7 +59,7 @@ fn solve_recursive(s: &[char], l: &[isize], in_seq: Option<isize>) -> isize {
     }
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
         let (data, lens) = split1(line, " ");

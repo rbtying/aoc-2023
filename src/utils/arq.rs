@@ -24,7 +24,7 @@ pub trait ArqSpec {
     /// Must satisfy the Distributive Law:
     /// For all f,a,b, apply(f, op(a, b), s+t) = op(apply(f, a, s), apply(f, b, t))
     /// The `size` parameter makes this law easier to satisfy in certain cases.
-    fn apply(f: &Self::F, a: &Self::S, size: isize) -> Self::S;
+    fn apply(f: &Self::F, a: &Self::S, size: i64) -> Self::S;
 
     // The following relaxations to the laws may apply.
     // If only point updates are made, the Composition and Distributive Laws
@@ -47,18 +47,18 @@ pub trait ArqSpec {
 // try supporting addition: a[i] += f.
 pub enum AssignMin {}
 impl ArqSpec for AssignMin {
-    type S = isize;
-    type F = isize;
+    type S = i64;
+    type F = i64;
     fn op(&a: &Self::S, &b: &Self::S) -> Self::S {
         a.min(b)
     }
     fn identity() -> Self::S {
-        isize::max_value()
+        i64::max_value()
     }
     fn compose(&f: &Self::F, _: &Self::F) -> Self::F {
         f
     }
-    fn apply(&f: &Self::F, _: &Self::S, _: isize) -> Self::S {
+    fn apply(&f: &Self::F, _: &Self::S, _: i64) -> Self::S {
         f
     }
 }
@@ -83,7 +83,7 @@ impl ArqSpec for OverlappingIntervals {
     fn compose(f: &Self::F, f2: &Self::F) -> Self::F {
         f.union(f2).copied().collect()
     }
-    fn apply(f: &Self::F, s: &Self::S, _: isize) -> Self::S {
+    fn apply(f: &Self::F, s: &Self::S, _: i64) -> Self::S {
         f.union(s).copied().collect()
     }
 }
@@ -101,14 +101,14 @@ impl ArqSpec for OverlappingIntervals {
 // is move to the product monoid of tuples (value, size_of_subtree).
 //
 // In mathematical jargon, we say that constant assignment f(a) = f is not an
-// endomorphism on (isize, +) because f(a+b) = f != 2*f = f(a) + f(b).
+// endomorphism on (i64, +) because f(a+b) = f != 2*f = f(a) + f(b).
 // On the other hand, f((a, s)) = (f*s, s) is indeed an endomorphism on pairs
 // with vector addition: f((a, s) + (b, t)) = f((a+b, s+t)) = (f*(s+t), s+t)
 //                       = (f*s, s) + (f*t, t) = f((a,s)) + f((b,t)).
 pub enum AssignSum {}
 impl ArqSpec for AssignSum {
-    type S = isize;
-    type F = isize;
+    type S = i64;
+    type F = i64;
     fn op(&a: &Self::S, &b: &Self::S) -> Self::S {
         a + b
     }
@@ -118,7 +118,7 @@ impl ArqSpec for AssignSum {
     fn compose(&f: &Self::F, _: &Self::F) -> Self::F {
         f
     }
-    fn apply(&f: &Self::F, _: &Self::S, size: isize) -> Self::S {
+    fn apply(&f: &Self::F, _: &Self::S, size: i64) -> Self::S {
         f * size
     }
 }
@@ -133,8 +133,8 @@ impl ArqSpec for AssignSum {
 // compose() should be unimplemented!() to prevent accidental "lazy" updates.
 pub enum SupplyDemand {}
 impl ArqSpec for SupplyDemand {
-    type S = (isize, isize, isize); // production, orders, sales
-    type F = (isize, isize);
+    type S = (i64, i64, i64); // production, orders, sales
+    type F = (i64, i64);
     fn op((p1, o1, s1): &Self::S, (p2, o2, s2): &Self::S) -> Self::S {
         let extra = (p1 - s1).min(o2 - s2);
         (p1 + p2, o1 + o2, s1 + s2 + extra)
@@ -145,7 +145,7 @@ impl ArqSpec for SupplyDemand {
     fn compose(_: &Self::F, _: &Self::F) -> Self::F {
         unimplemented!()
     }
-    fn apply(&(p_add, o_add): &Self::F, &(p, o, _): &Self::S, s: isize) -> Self::S {
+    fn apply(&(p_add, o_add): &Self::F, &(p, o, _): &Self::S, s: i64) -> Self::S {
         assert_eq!(s, 1);
         let p = p + p_add;
         let o = o + o_add;
@@ -181,7 +181,7 @@ impl<T: ArqSpec> Default for DynamicArqNode<T> {
 }
 
 impl<T: ArqSpec> DynamicArqNode<T> {
-    fn apply(&mut self, f: &T::F, size: isize) {
+    fn apply(&mut self, f: &T::F, size: i64) {
         self.val = T::apply(f, &self.val, size);
         if size > 1 {
             let h = match self.app {
@@ -193,7 +193,7 @@ impl<T: ArqSpec> DynamicArqNode<T> {
     }
 }
 
-pub type ArqView = (usize, isize);
+pub type ArqView = (usize, i64);
 
 /// A dynamic, and optionally persistent, associative range query data structure.
 pub struct DynamicArq<T: ArqSpec> {
@@ -211,7 +211,7 @@ impl<T: ArqSpec> DynamicArq<T> {
     }
 
     /// Lazily builds a tree initialized to the identity.
-    pub fn build_from_identity(&mut self, size: isize) -> ArqView {
+    pub fn build_from_identity(&mut self, size: i64) -> ArqView {
         self.nodes.push(DynamicArqNode::default());
         (self.nodes.len() - 1, size)
     }
@@ -279,13 +279,13 @@ impl<T: ArqSpec> DynamicArq<T> {
         }
     }
 
-    pub fn point_update(&mut self, view: ArqView, idx: isize, f: &T::F) -> ArqView {
+    pub fn point_update(&mut self, view: ArqView, idx: i64, f: &T::F) -> ArqView {
         self.update(view, idx, idx, f)
     }
 
     /// Applies the endomorphism f to all entries from l to r, inclusive.
     /// If l == r, the updates are eager. Otherwise, they are lazy.
-    pub fn update(&mut self, view: ArqView, l: isize, r: isize, f: &T::F) -> ArqView {
+    pub fn update(&mut self, view: ArqView, l: i64, r: i64, f: &T::F) -> ArqView {
         let (p_orig, s) = view;
         if r < 0 || s - 1 < l {
             view
@@ -306,7 +306,7 @@ impl<T: ArqSpec> DynamicArq<T> {
     }
 
     /// Returns the aggregate range query on all entries from l to r, inclusive.
-    pub fn query(&mut self, view: ArqView, l: isize, r: isize) -> T::S {
+    pub fn query(&mut self, view: ArqView, l: i64, r: i64) -> T::S {
         let (p, s) = view;
         if r < 0 || s - 1 < l {
             T::identity()
@@ -328,7 +328,7 @@ impl<T: ArqSpec> DynamicArq<T> {
 
 /// An example of binary search to find the first position whose element is negative.
 /// The DynamicArq version works on trees of any size, not necessarily a power of two.
-pub fn first_negative(arq: &mut DynamicArq<AssignMin>, view: ArqView) -> Option<isize> {
+pub fn first_negative(arq: &mut DynamicArq<AssignMin>, view: ArqView) -> Option<i64> {
     let (p, s) = view;
     if s == 1 {
         Some(0).filter(|_| arq.nodes[p].val < 0)
@@ -350,23 +350,23 @@ mod tests {
     #[test]
     fn test_find_min_in_range() {
         let mut arq = DynamicArq::<AssignMin>::new(false);
-        let mut view = arq.build_from_identity(std::isize::MAX);
+        let mut view = arq.build_from_identity(std::i64::MAX);
 
         for (idx, interval) in [0..=4, 3..=8, 2..=6].into_iter().enumerate() {
-            let idx = idx as isize;
+            let idx = idx as i64;
             view = arq.update(view, *interval.start(), *interval.end(), &idx);
         }
         assert_eq!(arq.query(view, 0, 2), 0);
         assert_eq!(arq.query(view, 2, 3), 2);
         assert_eq!(arq.query(view, 4, 6), 2);
         assert_eq!(arq.query(view, 7, 8), 1);
-        assert_eq!(arq.query(view, 10, 12), std::isize::MAX);
+        assert_eq!(arq.query(view, 10, 12), std::i64::MAX);
     }
 
     #[test]
     fn test_find_overlapping_intervals() {
         let mut arq = DynamicArq::<OverlappingIntervals>::new(false);
-        let mut view = arq.build_from_identity(std::isize::MAX);
+        let mut view = arq.build_from_identity(std::i64::MAX);
 
         let mut sizes = vec![];
         for (idx, interval) in [0..=4, 3..=8, 2..=6].into_iter().enumerate() {

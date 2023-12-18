@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-fn solve(input: &str, mul: isize) -> isize {
+fn solve(input: &str, mul: i64) -> i64 {
     let orig_grid = parse_char_grid(input);
     let (i_bounds, j_bounds) = get_grid_bounds(&orig_grid);
 
@@ -49,11 +49,11 @@ fn solve(input: &str, mul: isize) -> isize {
     s
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     solve(input, 2)
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     solve(input, 1_000_000)
 }
 

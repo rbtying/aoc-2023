@@ -18,9 +18,9 @@ macro_rules! impl_from_str_infallible {
 impl_from_str_infallible!(bool);
 impl_from_str_infallible!(i32);
 impl_from_str_infallible!(i64);
-impl_from_str_infallible!(isize);
 impl_from_str_infallible!(u32);
 impl_from_str_infallible!(u64);
+impl_from_str_infallible!(isize);
 impl_from_str_infallible!(usize);
 impl_from_str_infallible!(f64);
 impl_from_str_infallible!(String);
@@ -101,7 +101,7 @@ pub fn drop_prefix<'l>(s: &'l str, prefix: &str) -> &'l str {
     split1(s, prefix).1
 }
 
-pub fn parse_ints(input: &str) -> Vec<isize> {
+pub fn parse_ints(input: &str) -> Vec<i64> {
     let regex = Regex::new(r"-?\d+").unwrap();
     regex.find_iter(input).map(|x| parse1(x.as_str())).collect()
 }

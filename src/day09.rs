@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
         let mut values = vec![parse_ints(line)];
@@ -21,7 +21,7 @@ pub fn part1(input: &str) -> isize {
     s
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
         let mut values = vec![parse_ints(line)];

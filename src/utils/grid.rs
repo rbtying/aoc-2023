@@ -1,20 +1,20 @@
 use crate::prelude::*;
 
-pub type IGrid2D = DefaultHashMap<(isize, isize), char>;
-pub type Point = (isize, isize);
+pub type IGrid2D = DefaultHashMap<(i64, i64), char>;
+pub type Point = (i64, i64);
 
 pub fn parse_char_grid(input: &str) -> IGrid2D {
     let mut g = IGrid2D::default();
     for (i, line) in input.lines().enumerate() {
         for (j, ch) in line.chars().enumerate() {
-            g.insert((i as isize, j as isize), ch);
+            g.insert((i as i64, j as i64), ch);
         }
     }
     g
 }
 
 /// Returns (min_i..max_i+1), (min_j..max_j+1)
-pub fn get_grid_bounds(g: &IGrid2D) -> (Range<isize>, Range<isize>) {
+pub fn get_grid_bounds(g: &IGrid2D) -> (Range<i64>, Range<i64>) {
     let min = g
         .keys()
         .copied()
@@ -83,13 +83,13 @@ pub fn rotate_grid_inplace_ccw(g: &mut IGrid2D) {
     }
 }
 
-pub fn get_grid_row(g: &IGrid2D, i: isize) -> impl Iterator<Item = char> + '_ {
+pub fn get_grid_row(g: &IGrid2D, i: i64) -> impl Iterator<Item = char> + '_ {
     let (_, j_bounds) = get_grid_bounds(g);
 
     j_bounds.into_iter().map(move |j| g[&(i, j)])
 }
 
-pub fn get_grid_col(g: &IGrid2D, j: isize) -> impl Iterator<Item = char> + '_ {
+pub fn get_grid_col(g: &IGrid2D, j: i64) -> impl Iterator<Item = char> + '_ {
     let (i_bounds, _) = get_grid_bounds(g);
 
     i_bounds.into_iter().map(move |i| g[&(i, j)])
@@ -110,7 +110,7 @@ pub fn print_char_grid(g: &IGrid2D) {
     }
 }
 
-pub fn print_char_grid_with<F: Fn((isize, isize), char) -> D, D: std::fmt::Display>(
+pub fn print_char_grid_with<F: Fn((i64, i64), char) -> D, D: std::fmt::Display>(
     g: &IGrid2D,
     fmt: F,
 ) {
@@ -124,39 +124,39 @@ pub fn print_char_grid_with<F: Fn((isize, isize), char) -> D, D: std::fmt::Displ
     }
 }
 
-pub const fn point_add(a: (isize, isize), b: (isize, isize)) -> (isize, isize) {
+pub const fn point_add(a: (i64, i64), b: (i64, i64)) -> (i64, i64) {
     (a.0 + b.0, a.1 + b.1)
 }
-pub const fn point_neg(a: (isize, isize)) -> (isize, isize) {
+pub const fn point_neg(a: (i64, i64)) -> (i64, i64) {
     (-a.0, -a.1)
 }
-pub const fn point_mul(a: (isize, isize), k: isize) -> (isize, isize) {
+pub const fn point_mul(a: (i64, i64), k: i64) -> (i64, i64) {
     (a.0 * k, a.1 * k)
 }
-pub const fn point_dot(a: (isize, isize), b: (isize, isize)) -> isize {
+pub const fn point_dot(a: (i64, i64), b: (i64, i64)) -> i64 {
     a.0 * b.0 + a.1 * b.1
 }
-pub const fn point_det(a: (isize, isize), b: (isize, isize)) -> isize {
+pub const fn point_det(a: (i64, i64), b: (i64, i64)) -> i64 {
     a.0 * b.1 - a.1 * b.0
 }
 
-pub const UP: (isize, isize) = (-1, 0);
-pub const DOWN: (isize, isize) = point_neg(UP);
-pub const LEFT: (isize, isize) = (0, -1);
-pub const RIGHT: (isize, isize) = point_neg(LEFT);
-pub const UPLEFT: (isize, isize) = point_add(UP, LEFT);
-pub const UPRIGHT: (isize, isize) = point_add(UP, RIGHT);
-pub const DOWNLEFT: (isize, isize) = point_add(DOWN, LEFT);
-pub const DOWNRIGHT: (isize, isize) = point_add(DOWN, RIGHT);
+pub const UP: (i64, i64) = (-1, 0);
+pub const DOWN: (i64, i64) = point_neg(UP);
+pub const LEFT: (i64, i64) = (0, -1);
+pub const RIGHT: (i64, i64) = point_neg(LEFT);
+pub const UPLEFT: (i64, i64) = point_add(UP, LEFT);
+pub const UPRIGHT: (i64, i64) = point_add(UP, RIGHT);
+pub const DOWNLEFT: (i64, i64) = point_add(DOWN, LEFT);
+pub const DOWNRIGHT: (i64, i64) = point_add(DOWN, RIGHT);
 
-pub const FOUR_WAY: [(isize, isize); 4] = [LEFT, UP, RIGHT, DOWN];
+pub const FOUR_WAY: [(i64, i64); 4] = [LEFT, UP, RIGHT, DOWN];
 
-pub const EIGHT_WAY: [(isize, isize); 8] =
+pub const EIGHT_WAY: [(i64, i64); 8] =
     [LEFT, UPLEFT, UP, UPRIGHT, RIGHT, DOWNRIGHT, DOWN, DOWNLEFT];
 
 pub fn adjacents(
-    (i, j): (isize, isize),
-    deltas: impl IntoIterator<Item = (isize, isize)>,
-) -> impl Iterator<Item = (isize, isize)> {
+    (i, j): (i64, i64),
+    deltas: impl IntoIterator<Item = (i64, i64)>,
+) -> impl Iterator<Item = (i64, i64)> {
     deltas.into_iter().map(move |(di, dj)| (i + di, j + dj))
 }

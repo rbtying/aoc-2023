@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-fn parse_group(input: &str) -> Vec<(isize, isize, isize)> {
+fn parse_group(input: &str) -> Vec<(i64, i64, i64)> {
     input
         .lines()
         .skip(1)
@@ -8,7 +8,7 @@ fn parse_group(input: &str) -> Vec<(isize, isize, isize)> {
         .collect()
 }
 
-fn apply_map(m: &[(isize, isize, isize)], v: isize) -> isize {
+fn apply_map(m: &[(i64, i64, i64)], v: i64) -> i64 {
     for (dest_start, source_start, range_len) in m {
         if v >= *source_start && v < *source_start + *range_len {
             return *dest_start + v - *source_start;
@@ -17,7 +17,7 @@ fn apply_map(m: &[(isize, isize, isize)], v: isize) -> isize {
     v
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;
 
@@ -31,9 +31,9 @@ pub fn part1(input: &str) -> isize {
 }
 
 fn apply_map2(
-    m: &[(isize, isize, isize)],
-    intervals: Vec<RangeInclusive<isize>>,
-) -> Vec<RangeInclusive<isize>> {
+    m: &[(i64, i64, i64)],
+    intervals: Vec<RangeInclusive<i64>>,
+) -> Vec<RangeInclusive<i64>> {
     let mut r = vec![];
 
     for int in intervals {
@@ -60,7 +60,7 @@ fn apply_map2(
     r
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;
 
@@ -77,14 +77,14 @@ pub fn part2(input: &str) -> isize {
     v.into_iter().map(|x| *x.start()).min().unwrap()
 }
 
-pub fn part2dumb(input: &str) -> isize {
+pub fn part2dumb(input: &str) -> i64 {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;
 
     let seeds = seed_str
         .split_whitespace()
         .map(parse1)
-        .collect::<Vec<isize>>();
+        .collect::<Vec<i64>>();
     let mut v = vec![];
     for chunk in seeds.chunks(2) {
         v.extend(chunk[0]..=chunk[0] + chunk[1]);

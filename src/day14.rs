@@ -16,13 +16,13 @@ fn fall_north(grid: &mut IGrid2D) {
     }
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let mut g = parse_char_grid(input);
     fall_north(&mut g);
     score(&g)
 }
 
-fn score(g: &IGrid2D) -> isize {
+fn score(g: &IGrid2D) -> i64 {
     let mut sum = 0;
     // score
     let (i_bounds, _) = get_grid_bounds(g);
@@ -35,7 +35,7 @@ fn score(g: &IGrid2D) -> isize {
     sum
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let mut g = parse_char_grid(input);
     g.retain(|_, v| *v != '.');
 

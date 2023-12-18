@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-fn solve(iter: impl IntoIterator<Item = (Point, isize)>) -> isize {
+fn solve(iter: impl IntoIterator<Item = (Point, i64)>) -> i64 {
     let mut pos = (0, 0);
     let mut path = vec![pos];
     let mut b = 0;
@@ -12,12 +12,20 @@ fn solve(iter: impl IntoIterator<Item = (Point, isize)>) -> isize {
     }
 
     let interior_area = compute_lattice_polygon_area(path);
-    total_lattice_polygon_area_from_interior_boundary(interior_area, b)
+    // Because the problem specifies the dig kerf as 1mx1m blocks, we actually
+    // are looking for the area of the polygon that is described by dilating the
+    // existing boundary by 0.5m.
+    //
+    // As it happens, Pick's theorem describes how to remove that dilated area
+    // (i.e. the extra width of the boundary) to get the area actually bounded
+    // by the points, so we can invert the calculation to get the requested
+    // area.
+    interior_area.abs() + b / 2 + 1
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     solve(input.lines().map(|line| {
-        let (dir, len, _): (&str, isize, &str) = parse3(line.split(" "));
+        let (dir, len, _): (&str, i64, &str) = parse3(line.split(' '));
         (
             match dir {
                 "R" => RIGHT,
@@ -31,11 +39,11 @@ pub fn part1(input: &str) -> isize {
     }))
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     solve(input.lines().map(|line| {
-        let (_, _, color): (&str, isize, &str) = parse3(line.split(" "));
+        let (_, _, color): (&str, i64, &str) = parse3(line.split(' '));
         let color = color.trim_matches(|c| "()#".find(c).is_some());
-        let len = isize::from_str_radix(&color[0..color.len() - 1], 16).unwrap();
+        let len = i64::from_str_radix(&color[0..color.len() - 1], 16).unwrap();
 
         (
             match color.chars().last().unwrap() {

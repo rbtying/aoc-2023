@@ -1,16 +1,16 @@
 use crate::prelude::*;
 
-fn hash_fn(s: &str) -> isize {
+fn hash_fn(s: &str) -> i64 {
     let mut current_value = 0;
     for b in s.bytes() {
-        current_value += b as isize;
+        current_value += b as i64;
         current_value *= 17;
         current_value %= 256;
     }
     current_value
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let mut sum = 0;
     for s in input.replace('\n', "").split(',') {
         sum += hash_fn(s);
@@ -18,8 +18,8 @@ pub fn part1(input: &str) -> isize {
     sum
 }
 
-pub fn part2(input: &str) -> isize {
-    let mut boxes: Vec<Vec<(String, isize)>> = vec![vec![]; 256];
+pub fn part2(input: &str) -> i64 {
+    let mut boxes: Vec<Vec<(String, i64)>> = vec![vec![]; 256];
 
     for s in input.replace('\n', "").split(',') {
         if s.contains('-') {
@@ -30,7 +30,7 @@ pub fn part2(input: &str) -> isize {
                 v.remove(p);
             }
         } else {
-            let (label, focal): (&str, isize) = parse_split_once(s, "=");
+            let (label, focal): (&str, i64) = parse_split_once(s, "=");
             let h = hash_fn(label) as usize;
             let v = &mut boxes[h];
             if let Some(p) = v.iter().position(|s| s.0 == label) {
@@ -45,7 +45,7 @@ pub fn part2(input: &str) -> isize {
 
     for (slot, v) in boxes.iter().enumerate() {
         for (idx, (_, lens)) in v.iter().enumerate() {
-            s += ((slot + 1) as isize) * ((idx + 1) as isize) * lens;
+            s += ((slot + 1) as i64) * ((idx + 1) as i64) * lens;
         }
     }
 

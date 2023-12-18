@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-fn count_and_type(input: &str) -> isize {
+fn count_and_type(input: &str) -> i64 {
     let mut m = HashMap::new();
     for c in input.chars() {
         *m.entry(c).or_default() += 1;
@@ -11,7 +11,7 @@ fn count_and_type(input: &str) -> isize {
     type_(&v)
 }
 
-fn type_(hand: &[(char, isize)]) -> isize {
+fn type_(hand: &[(char, i64)]) -> i64 {
     match hand.len() {
         1 => 0,
         2 if hand[0].1 == 4 => 1,
@@ -28,7 +28,7 @@ fn char_(v: char) -> usize {
     "AKQJT98765432".find(v).unwrap()
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let mut rows = input
         .lines()
         .map(|line| split1(line, " "))
@@ -48,11 +48,11 @@ pub fn part1(input: &str) -> isize {
 
     rows.into_iter()
         .enumerate()
-        .map(|(idx, (_, bid))| parse1::<isize>(bid) * ((idx + 1) as isize))
-        .sum::<isize>()
+        .map(|(idx, (_, bid))| parse1::<i64>(bid) * ((idx + 1) as i64))
+        .sum::<i64>()
 }
 
-fn count_and_max_type_(input: &str) -> isize {
+fn count_and_max_type_(input: &str) -> i64 {
     assert_eq!(input.len(), 5);
     let mut m = HashMap::new();
     for c in input.chars() {
@@ -81,7 +81,7 @@ fn char_2(v: char) -> usize {
     "AKQT98765432J".find(v).unwrap()
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let mut rows = input
         .lines()
         .map(|line| split1(line, " "))
@@ -101,8 +101,8 @@ pub fn part2(input: &str) -> isize {
 
     rows.into_iter()
         .enumerate()
-        .map(|(idx, (_, bid))| parse1::<isize>(bid) * ((idx + 1) as isize))
-        .sum::<isize>()
+        .map(|(idx, (_, bid))| parse1::<i64>(bid) * ((idx + 1) as i64))
+        .sum::<i64>()
 }
 
 #[cfg(test)]

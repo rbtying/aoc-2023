@@ -1,11 +1,11 @@
 use crate::prelude::*;
 
-fn get_loop(input: &str) -> Vec<(isize, isize)> {
+fn get_loop(input: &str) -> Vec<(i64, i64)> {
     let grid = parse_char_grid(input);
 
     let (i_bounds, j_bounds) = get_grid_bounds(&grid);
     let mut s_pos = (-1, -1);
-    let mut g = Graph::<(isize, isize), ()>::default();
+    let mut g = Graph::<(i64, i64), ()>::default();
     let mut nodes = HashMap::new();
 
     for i in i_bounds.clone() {
@@ -71,17 +71,19 @@ fn get_loop(input: &str) -> Vec<(isize, isize)> {
         .collect()
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let inloop = get_loop(input);
-    (inloop.len() / 2) as isize
+    (inloop.len() / 2) as i64
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let path = get_loop(input);
-    let path_len = path.len() as isize;
+    let path_len = path.len() as i64;
 
     let total_area = compute_lattice_polygon_area(path);
-    interior_lattice_polygon_area_from_total_boundary(total_area, path_len as isize)
+    // We want the interior area, not the total area of the polygon. We can
+    // apply Pick's theorem to subtract out the boundary.
+    total_area.abs() - (path_len) / 2 + 1
 }
 
 #[cfg(test)]

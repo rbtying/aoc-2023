@@ -37,30 +37,17 @@ pub fn draw_polygon(mut points: Vec<Point>) {
     print_char_grid(&g);
 }
 
-// Apply shoelace theorem -- returns signed area.
-pub fn compute_lattice_polygon_area(mut points: Vec<Point>) -> isize {
+/// Apply shoelace theorem -- returns signed area.
+/// Often used in conjunction with Pick's theorem:
+///
+/// Total Area = Interior Area + (Boundary Area / 2) - 1
+pub fn compute_lattice_polygon_area(mut points: Vec<Point>) -> i64 {
     if points[0] != *points.last().unwrap() {
         points.push(points[0]);
     }
     points
         .windows(2)
         .map(|w| w[0].0 * w[1].1 - w[0].1 * w[1].0)
-        .sum::<isize>()
+        .sum::<i64>()
         / 2
-}
-
-// Apply Pick's theroem
-pub fn total_lattice_polygon_area_from_interior_boundary(
-    interior_area: isize,
-    boundary_area: isize,
-) -> isize {
-    interior_area.abs() + boundary_area.abs() / 2 + 1
-}
-
-// Apply Pick's theroem
-pub fn interior_lattice_polygon_area_from_total_boundary(
-    total_area: isize,
-    boundary_area: isize,
-) -> isize {
-    total_area.abs() - boundary_area.abs() / 2 + 1
 }

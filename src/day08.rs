@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let (instructions, lookups) = split1(input, "\n\n");
 
     let mut map = DefaultHashMap::default();
@@ -19,13 +19,13 @@ pub fn part1(input: &str) -> isize {
             _ => unreachable!(),
         };
         if pos == "ZZZ" {
-            return (idx + 1) as isize;
+            return (idx + 1) as i64;
         }
     }
     unreachable!()
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let (instructions, lookups) = split1(input, "\n\n");
 
     let mut map = DefaultHashMap::default();

@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-fn solve(g: &IGrid2D, initial_beams: Vec<((isize, isize), (isize, isize))>) -> isize {
+fn solve(g: &IGrid2D, initial_beams: Vec<((i64, i64), (i64, i64))>) -> i64 {
     let mut max_energized = -1;
     let (i_bounds, j_bounds) = get_grid_bounds(g);
 
@@ -64,18 +64,18 @@ fn solve(g: &IGrid2D, initial_beams: Vec<((isize, isize), (isize, isize))>) -> i
                 .into_iter()
                 .map(|x| x.0)
                 .collect::<HashSet<_>>()
-                .len() as isize,
+                .len() as i64,
         )
     }
     max_energized
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     let g = parse_char_grid(input);
     solve(&g, vec![((0, 0), RIGHT)])
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     let g = parse_char_grid(input);
     let (i_bounds, j_bounds) = get_grid_bounds(&g);
     let mut initial_beams = vec![];

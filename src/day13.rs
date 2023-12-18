@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-fn solve(input: &str, smudges: isize) -> isize {
+fn solve(input: &str, smudges: i64) -> i64 {
     let mut s = 0;
     for pattern in input.split("\n\n") {
         let grid = parse_char_grid(pattern);
@@ -41,11 +41,11 @@ fn solve(input: &str, smudges: isize) -> isize {
     s
 }
 
-pub fn part1(input: &str) -> isize {
+pub fn part1(input: &str) -> i64 {
     solve(input, 0)
 }
 
-pub fn part2(input: &str) -> isize {
+pub fn part2(input: &str) -> i64 {
     solve(input, 1)
 }
 

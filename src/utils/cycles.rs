@@ -7,15 +7,15 @@ use crate::prelude::*;
 /// passed we should index to X+1.
 pub struct CycleInfo<S, K> {
     pub history: Vec<K>,
-    pub offset: isize,
-    pub cycle_len: isize,
+    pub offset: i64,
+    pub cycle_len: i64,
     pub final_state: S,
 }
 
-impl<S, K> Index<isize> for CycleInfo<S, K> {
+impl<S, K> Index<i64> for CycleInfo<S, K> {
     type Output = K;
 
-    fn index(&self, index: isize) -> &Self::Output {
+    fn index(&self, index: i64) -> &Self::Output {
         assert!(index >= 1);
         if (index as usize) < self.history.len() {
             &self.history[index as usize]
@@ -52,8 +52,8 @@ pub fn find_cycle_generic<S, K>(
         let k = extract_key(&s);
 
         if let Some(offset) = history.iter().position(|kk| found_cycle(&k, kk)) {
-            let offset = offset as isize;
-            let cycle_len = history.len() as isize - offset;
+            let offset = offset as i64;
+            let cycle_len = history.len() as i64 - offset;
             history.push(k);
 
             return CycleInfo {
@@ -86,8 +86,8 @@ pub fn find_cycle_equals<S, K: Eq + Hash>(
 
         if let Some(offset) = history.get(&k) {
             let offset = *offset;
-            let cycle_len = history.len() as isize - offset;
-            let mut v = history.into_iter().collect::<Vec<(K, isize)>>();
+            let cycle_len = history.len() as i64 - offset;
+            let mut v = history.into_iter().collect::<Vec<(K, i64)>>();
             v.sort_by_key(|vv| vv.1);
             let history = v
                 .into_iter()
