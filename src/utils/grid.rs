@@ -110,6 +110,20 @@ pub fn print_char_grid(g: &IGrid2D) {
     }
 }
 
+pub fn print_char_grid_with<F: Fn((isize, isize), char) -> D, D: std::fmt::Display>(
+    g: &IGrid2D,
+    fmt: F,
+) {
+    let (i_bounds, j_bounds) = get_grid_bounds(g);
+    for i in i_bounds {
+        for j in j_bounds.clone() {
+            let ch = g[&(i, j)];
+            eprint!("{}", fmt((i, j), ch));
+        }
+        eprintln!()
+    }
+}
+
 pub const fn point_add(a: (isize, isize), b: (isize, isize)) -> (isize, isize) {
     (a.0 + b.0, a.1 + b.1)
 }

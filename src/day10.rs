@@ -77,23 +77,11 @@ pub fn part1(input: &str) -> isize {
 }
 
 pub fn part2(input: &str) -> isize {
-    let mut path = get_loop(input);
+    let path = get_loop(input);
     let path_len = path.len() as isize;
 
-    path.push(path[0]);
-
-    // Abuse the shoelace theorem to find the total area, then remove the boundary.
-    let mut area = path
-        .windows(2)
-        .map(|w| w[0].0 * w[1].1 - w[0].1 * w[1].0)
-        .sum::<isize>()
-        / 2;
-    if area < 0 {
-        area = -area;
-    }
-
-    // A = I + B/2 - 1 for lattice polygons
-    area - path_len / 2 + 1
+    let total_area = compute_lattice_polygon_area(path);
+    interior_lattice_polygon_area_from_total_boundary(total_area, path_len as isize)
 }
 
 #[cfg(test)]
