@@ -17,6 +17,21 @@ pub fn overlaps(a: RangeInclusive<i64>, b: RangeInclusive<i64>) -> bool {
     e <= f
 }
 
+pub fn split_interval_at(
+    r: RangeInclusive<i64>,
+    at: i64,
+) -> (RangeInclusive<i64>, RangeInclusive<i64>) {
+    if at < *r.start() {
+        (at..=at, r)
+    } else if at > *r.end() {
+        (r, at..=at)
+    } else if r.end() - r.start() > 0 {
+        (*r.start()..=at, at + 1..=*r.end())
+    } else {
+        (r.clone(), r)
+    }
+}
+
 /// Returns true if the intervals overlap with a nontrivial interval.
 pub fn overlaps_nontrivial(a: RangeInclusive<i64>, b: RangeInclusive<i64>) -> bool {
     let e = a.start().max(b.start());
@@ -182,5 +197,12 @@ mod tests {
                 b: vec![],
             }
         );
+    }
+
+    #[test]
+    fn test_interval_split() {
+        assert_eq!(split_interval_at(0..=4, 1), ((0..=1), (2..=4)));
+        assert_eq!(split_interval_at(0..=0, 0), ((0..=0), (0..=0)));
+        assert_eq!(split_interval_at(0..=1, 0), ((0..=0), (1..=1)));
     }
 }

@@ -77,19 +77,20 @@ pub fn part2(input: &str) -> i64 {
 
     let rules = parse_rules(rules_str);
 
-    let mut metapart = DefaultHashMap::new((1, 4000));
-    metapart.insert("x".to_string(), (1, 4000));
-    metapart.insert("m".to_string(), (1, 4000));
-    metapart.insert("a".to_string(), (1, 4000));
-    metapart.insert("s".to_string(), (1, 4000));
+    let mut metapart = DefaultHashMap::new(1..=4000);
+    // Ensure that the default val exists for each.
+    metapart.get_mut("x".to_string());
+    metapart.get_mut("m".to_string());
+    metapart.get_mut("a".to_string());
+    metapart.get_mut("s".to_string());
 
     fn recurse(
-        mut mp: DefaultHashMap<String, (i64, i64)>,
+        mut mp: DefaultHashMap<String, RangeInclusive<i64>>,
         wf: &str,
         rules: &HashMap<String, Vec<(String, char, i64, String)>>,
     ) -> i64 {
         if wf == "A" {
-            mp.values().map(|r| r.1 - r.0 + 1).product()
+            mp.values().map(|r| r.end() - r.start() + 1).product()
         } else if wf == "R" {
             0
         } else {
@@ -97,19 +98,21 @@ pub fn part2(input: &str) -> i64 {
             for (var, op, val, res) in &rules[wf] {
                 match op {
                     '>' => {
-                        if mp[var].1 > *val {
+                        if mp[var].end() > val {
                             let mut nmp = mp.clone();
-                            nmp[var.clone()].0 = nmp[var].0.max(val + 1);
+                            let (lower, upper) = split_interval_at(mp[var].clone(), *val);
+                            nmp[var.clone()] = upper;
                             r += recurse(nmp, res, rules);
-                            mp[var.clone()].1 = mp[var].1.min(*val);
+                            mp[var.clone()] = lower;
                         }
                     }
                     '<' => {
-                        if mp[var].0 < *val {
+                        if mp[var].start() < val {
                             let mut nmp = mp.clone();
-                            nmp[var.clone()].1 = nmp[var].1.min(val - 1);
+                            let (lower, upper) = split_interval_at(mp[var].clone(), val - 1);
+                            nmp[var.clone()] = lower;
                             r += recurse(nmp, res, rules);
-                            mp[var.clone()].0 = mp[var].0.max(*val);
+                            mp[var.clone()] = upper;
                         }
                     }
                     '.' => {
