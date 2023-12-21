@@ -9,5 +9,6 @@ edition = "2021"
 cached = "0.46.1"
 euclid = "0.22.9"
 fnv = "1.0.7"
+num = { version = "0.4.1", features = ["num-bigint", "std"] }
 petgraph = "0.6.4"
 regex = "1.10.2"

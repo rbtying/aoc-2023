@@ -3,19 +3,9 @@ use crate::prelude::*;
 pub fn part1(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
-        let mut values = vec![parse_ints(line)];
-
-        while values.last().unwrap().iter().any(|v| *v != 0) {
-            let prev = values.last().unwrap();
-            values.push(prev.windows(2).map(|w| w[1] - w[0]).collect());
-        }
-
-        for idx in (1..values.len()).rev() {
-            let last_val = *values[idx].last().unwrap();
-            let last_val2 = *values[idx - 1].last().unwrap();
-            values[idx - 1].push(last_val2 + last_val);
-        }
-        s += values[0].last().unwrap();
+        let y = parse_ints(line);
+        let p = polynomial_regression(&(0i64..y.len() as i64).collect::<Vec<_>>(), &y, y.len() - 1);
+        s += p.eval(y.len() as i64);
     }
 
     s
@@ -24,19 +14,9 @@ pub fn part1(input: &str) -> i64 {
 pub fn part2(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
-        let mut values = vec![parse_ints(line)];
-
-        while values.last().unwrap().iter().any(|v| *v != 0) {
-            let prev = values.last().unwrap();
-            values.push(prev.windows(2).map(|w| w[1] - w[0]).collect());
-        }
-
-        for idx in (1..values.len()).rev() {
-            let first_val = *values[idx].first().unwrap();
-            let first_val2 = *values[idx - 1].first().unwrap();
-            values[idx - 1].insert(0, first_val2 - first_val);
-        }
-        s += values[0].first().unwrap();
+        let y = parse_ints(line);
+        let p = polynomial_regression(&(0i64..y.len() as i64).collect::<Vec<_>>(), &y, y.len() - 1);
+        s += p.eval(-1);
     }
 
     s

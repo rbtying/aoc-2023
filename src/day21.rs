@@ -39,8 +39,8 @@ pub fn part2(input: &str) -> i64 {
     queue.push_back((*start_pos, 0));
 
     let mut visited: DefaultHashMap<i64, HashSet<(i64, i64)>> = DefaultHashMap::default();
-    let mut visited2 = HashSet::new();
     let mut counts = vec![];
+    let mut idxes = vec![];
 
     let target: i64 = 26501365;
 
@@ -51,33 +51,18 @@ pub fn part2(input: &str) -> i64 {
         visited[step].insert(n);
 
         // if we got to `step`, we've finished `step-1`. Do some cleanup
-        if !visited2.contains(&(step - 1)) {
+        if !visited[step - 1].is_empty() {
             let prev_len = visited[step - 1].len() as i64;
             if ((step - 1) - i_bounds.end / 2) % i_bounds.end == 0 {
+                idxes.push(step - 1);
                 counts.push(prev_len);
 
                 eprintln!("counts: {:?}", counts);
                 if counts.len() == 3 {
-                    let dcounts = counts.windows(2).map(|w| w[1] - w[0]).collect::<Vec<_>>();
-                    eprintln!("\tdcounts: {:?}", dcounts);
-                    let ddcounts = dcounts.windows(2).map(|w| w[1] - w[0]).collect::<Vec<_>>();
-                    eprintln!("\tddcounts: {:?}", ddcounts);
-
-                    let a = ddcounts[0];
-                    let b = dcounts[0];
-                    let c = counts[0];
-
-                    let x = (target - i_bounds.end / 2) / i_bounds.end;
-                    eprintln!("x = {}", x);
-                    eprintln!("a = {}, b = {}, c = {}", a, b, c);
-
-                    // This is polynomial interpretation using Newton's
-                    // interpolating polynomial
-                    return x * (x - 1) * a / 2 + x * b + c;
+                    return polynomial_regression(&idxes, &counts, counts.len() - 1).eval(target);
                 }
             }
             visited.remove(&(step - 1));
-            visited2.insert(step - 1);
         }
 
         if step == target {

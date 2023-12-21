@@ -31,6 +31,8 @@ pub mod prelude {
     pub use std::ops::*;
     pub use std::str::FromStr;
 
+    pub use ::num::bigint::*;
+    pub use ::num::rational::*;
     pub use euclid::*;
     pub use fnv::*;
     pub use petgraph::prelude::*;
