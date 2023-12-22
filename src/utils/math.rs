@@ -26,7 +26,7 @@ pub fn differences(x: &[i64]) -> Vec<i64> {
 }
 
 pub fn polynomial_regression(x: &[i64], y: &[i64], n: usize) -> NewtonPolynomial {
-    assert!(x.len() >= n + 1);
+    assert!(x.len() > n);
     assert_eq!(x.len(), y.len());
 
     let mut p = vec![Rational64::from_integer(y[0])];
