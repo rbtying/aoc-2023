@@ -40,52 +40,45 @@ pub fn part1(input: &str) -> i64 {
                 && overlaps(b.x.clone(), b2.x.clone())
                 && overlaps(b.y.clone(), b2.y.clone())
             {
-                can_collide[b.label].insert(b2.label);
-                can_collide[b2.label].insert(b.label);
+                if b2.z.end() < b.z.start() {
+                    can_collide[b.label].insert(b2.label);
+                }
+                if b.z.end() < b2.z.start() {
+                    can_collide[b2.label].insert(b.label);
+                }
             }
         }
     }
 
     // Try to move every brick down
     for label in &brick_order {
-        loop {
-            let bz = bricks[label].z.start() - 1..=*bricks[label].z.end() - 1;
-            let mut can_go_down = true;
-            for label2 in &can_collide[label] {
-                let b2 = &bricks[label2];
-                if overlaps(b2.z.clone(), bz.clone()) {
-                    can_go_down = false;
-                }
-            }
-            if can_go_down && *bz.start() > 0 {
-                bricks.get_mut(label).unwrap().z = bz;
-            } else {
-                break;
-            }
-        }
+        let max_z_under_brick = can_collide[label]
+            .iter()
+            .map(|l| *bricks[l].z.end())
+            .filter(|z| z < bricks[label].z.start())
+            .max()
+            .unwrap_or(0);
+
+        let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
+        let bz = bricks[label].z.start() - delta..=*bricks[label].z.end() - delta;
+        bricks.get_mut(label).unwrap().z = bz;
     }
 
     let mut disintegrateable = 0;
-    for label in &brick_order {
+    for removed in &brick_order {
         let mut d = true;
 
-        for label2 in &can_collide[label] {
-            let bz2 = bricks[label2].z.start() - 1..=bricks[label2].z.end() - 1;
+        for label in &brick_order {
+            let max_z_under_brick = can_collide[label]
+                .iter()
+                .filter(|l| *l != removed)
+                .map(|l| *bricks[l].z.end())
+                .filter(|z| z < bricks[label].z.start())
+                .max()
+                .unwrap_or(0);
 
-            if *bz2.start() == 0 {
-                continue;
-            }
-
-            let mut can_go_down = true;
-            for label3 in &can_collide[label2] {
-                if label3 == label {
-                    continue;
-                }
-                if overlaps(bricks[label3].z.clone(), bz2.clone()) {
-                    can_go_down = false;
-                }
-            }
-            if can_go_down {
+            let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
+            if delta > 0 {
                 d = false;
                 break;
             }
@@ -131,29 +124,27 @@ pub fn part2(input: &str) -> i64 {
                 && overlaps(b.x.clone(), b2.x.clone())
                 && overlaps(b.y.clone(), b2.y.clone())
             {
-                can_collide[b.label].insert(b2.label);
-                can_collide[b2.label].insert(b.label);
+                if b2.z.end() < b.z.start() {
+                    can_collide[b.label].insert(b2.label);
+                }
+                if b.z.end() < b2.z.start() {
+                    can_collide[b2.label].insert(b.label);
+                }
             }
         }
     }
-
     // Try to move every brick down
     for label in &brick_order {
-        loop {
-            let bz = bricks[label].z.start() - 1..=*bricks[label].z.end() - 1;
-            let mut can_go_down = true;
-            for label2 in &can_collide[label] {
-                let b2 = &bricks[label2];
-                if overlaps(b2.z.clone(), bz.clone()) {
-                    can_go_down = false;
-                }
-            }
-            if can_go_down && *bz.start() > 0 {
-                bricks.get_mut(label).unwrap().z = bz;
-            } else {
-                break;
-            }
-        }
+        let max_z_under_brick = can_collide[label]
+            .iter()
+            .map(|l| *bricks[l].z.end())
+            .filter(|z| z < bricks[label].z.start())
+            .max()
+            .unwrap_or(0);
+
+        let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
+        let bz = bricks[label].z.start() - delta..=*bricks[label].z.end() - delta;
+        bricks.get_mut(label).unwrap().z = bz;
     }
 
     let mut sum = 0;
@@ -165,27 +156,23 @@ pub fn part2(input: &str) -> i64 {
         while dirty {
             dirty = false;
 
+            // Try to move every brick down
             for label in &brick_order {
-                loop {
-                    let bz = bricks[label].z.start() - 1..=*bricks[label].z.end() - 1;
-                    let mut can_go_down = true;
-                    for label2 in &can_collide[label] {
-                        if label2 == removed {
-                            continue;
-                        }
-                        let b2 = &bricks[label2];
-                        if overlaps(b2.z.clone(), bz.clone()) {
-                            can_go_down = false;
-                        }
-                    }
-                    if can_go_down && *bz.start() > 0 {
-                        dirty = true;
-                        dropped.insert(label);
-                        bricks.get_mut(label).unwrap().z = bz;
-                    } else {
-                        break;
-                    }
+                let max_z_under_brick = can_collide[label]
+                    .iter()
+                    .filter(|l| *l != removed)
+                    .map(|l| *bricks[l].z.end())
+                    .filter(|z| z < bricks[label].z.start())
+                    .max()
+                    .unwrap_or(0);
+
+                let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
+                let bz = bricks[label].z.start() - delta..=*bricks[label].z.end() - delta;
+                if delta > 0 {
+                    dropped.insert(label);
+                    dirty = true;
                 }
+                bricks.get_mut(label).unwrap().z = bz;
             }
         }
 
