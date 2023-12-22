@@ -8,27 +8,15 @@ struct Brick {
     z: RangeInclusive<i64>,
 }
 
-pub fn part1(input: &str) -> i64 {
-    let mut bricks = HashMap::new();
-    for (label, line) in input.lines().enumerate() {
-        let (lhs, rhs) = split1(line, "~");
-        let (x1, y1, z1): (i64, i64, i64) = parse3(lhs.split(','));
-        let (x2, y2, z2): (i64, i64, i64) = parse3(rhs.split(','));
-
-        bricks.insert(
-            label,
-            Brick {
-                label,
-                x: x1.min(x2)..=x1.max(x2),
-                y: y1.min(y2)..=y1.max(y2),
-                z: z1.min(z2)..=z1.max(z2),
-            },
-        );
-    }
-
-    let mut brick_order = bricks.keys().copied().collect::<Vec<_>>();
-    brick_order.sort_by_key(|idx| *bricks[idx].z.start());
-
+/// Make the bricks fall down, and returns a map from brick to bricks it
+/// supports, and a map from brick to bricks it is supported by
+fn fall(
+    bricks: &mut HashMap<usize, Brick>,
+    brick_order: &[usize],
+) -> (
+    DefaultHashMap<usize, HashSet<usize>>,
+    DefaultHashMap<usize, HashSet<usize>>,
+) {
     let mut can_collide: DefaultHashMap<usize, HashSet<usize>> =
         DefaultHashMap::new(HashSet::default());
 
@@ -50,46 +38,61 @@ pub fn part1(input: &str) -> i64 {
         }
     }
 
+    let mut supports = DefaultHashMap::<usize, HashSet<usize>>::default();
+    let mut supported_by = DefaultHashMap::<usize, HashSet<usize>>::default();
+
     // Try to move every brick down
-    for label in &brick_order {
+    for label in brick_order {
         let max_z_under_brick = can_collide[label]
             .iter()
             .map(|l| *bricks[l].z.end())
             .filter(|z| z < bricks[label].z.start())
             .max()
             .unwrap_or(0);
+        for (a, b) in can_collide[label]
+            .iter()
+            .filter(|l| *bricks[l].z.end() == max_z_under_brick)
+            .map(|l| (*l, *label))
+        {
+            supports[a].insert(b);
+            supported_by[b].insert(a);
+        }
 
         let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
         let bz = bricks[label].z.start() - delta..=*bricks[label].z.end() - delta;
         bricks.get_mut(label).unwrap().z = bz;
     }
 
-    let mut disintegrateable = 0;
-    for removed in &brick_order {
-        let mut d = true;
+    (supports, supported_by)
+}
 
-        for label in &brick_order {
-            let max_z_under_brick = can_collide[label]
-                .iter()
-                .filter(|l| *l != removed)
-                .map(|l| *bricks[l].z.end())
-                .filter(|z| z < bricks[label].z.start())
-                .max()
-                .unwrap_or(0);
+pub fn part1(input: &str) -> i64 {
+    let mut bricks = HashMap::new();
+    for (label, line) in input.lines().enumerate() {
+        let (lhs, rhs) = split1(line, "~");
+        let (x1, y1, z1): (i64, i64, i64) = parse3(lhs.split(','));
+        let (x2, y2, z2): (i64, i64, i64) = parse3(rhs.split(','));
 
-            let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
-            if delta > 0 {
-                d = false;
-                break;
-            }
-        }
-
-        if d {
-            disintegrateable += 1;
-        }
+        bricks.insert(
+            label,
+            Brick {
+                label,
+                x: x1.min(x2)..=x1.max(x2),
+                y: y1.min(y2)..=y1.max(y2),
+                z: z1.min(z2)..=z1.max(z2),
+            },
+        );
     }
 
-    disintegrateable
+    let mut brick_order = bricks.keys().copied().collect::<Vec<_>>();
+    brick_order.sort_by_key(|idx| *bricks[idx].z.start());
+
+    let (supports, supported_by) = fall(&mut bricks, &brick_order);
+
+    brick_order
+        .into_iter()
+        .filter(|l| supports[l].iter().all(|l2| supported_by[l2].len() >= 2))
+        .count() as i64
 }
 
 pub fn part2(input: &str) -> i64 {
@@ -113,73 +116,28 @@ pub fn part2(input: &str) -> i64 {
     let mut brick_order = bricks.keys().copied().collect::<Vec<_>>();
     brick_order.sort_by_key(|idx| *bricks[idx].z.start());
 
-    let mut can_collide: DefaultHashMap<usize, HashSet<usize>> =
-        DefaultHashMap::new(HashSet::default());
-
-    for (i, b) in brick_order.iter().enumerate() {
-        for b2 in brick_order.iter().skip(i) {
-            let b = &bricks[b];
-            let b2 = &bricks[b2];
-            if b.label != b2.label
-                && overlaps(b.x.clone(), b2.x.clone())
-                && overlaps(b.y.clone(), b2.y.clone())
-            {
-                if b2.z.end() < b.z.start() {
-                    can_collide[b.label].insert(b2.label);
-                }
-                if b.z.end() < b2.z.start() {
-                    can_collide[b2.label].insert(b.label);
-                }
-            }
-        }
-    }
-    // Try to move every brick down
-    for label in &brick_order {
-        let max_z_under_brick = can_collide[label]
-            .iter()
-            .map(|l| *bricks[l].z.end())
-            .filter(|z| z < bricks[label].z.start())
-            .max()
-            .unwrap_or(0);
-
-        let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
-        let bz = bricks[label].z.start() - delta..=*bricks[label].z.end() - delta;
-        bricks.get_mut(label).unwrap().z = bz;
-    }
+    let (supports, supported_by) = fall(&mut bricks, &brick_order);
 
     let mut sum = 0;
-    for removed in &brick_order {
-        let mut bricks = bricks.clone();
-        let mut dropped = HashSet::new();
-        let mut dirty = true;
+    for r in &brick_order {
+        let mut removed = HashSet::new();
 
-        while dirty {
-            dirty = false;
+        let mut q = VecDeque::new();
+        q.push_back(*r);
 
-            // Try to move every brick down
-            for label in &brick_order {
-                let max_z_under_brick = can_collide[label]
+        while let Some(n) = q.pop_front() {
+            removed.insert(n);
+
+            q.extend(
+                supports[n]
                     .iter()
-                    .filter(|l| *l != removed)
-                    .map(|l| *bricks[l].z.end())
-                    .filter(|z| z < bricks[label].z.start())
-                    .max()
-                    .unwrap_or(0);
-
-                let delta = *bricks[label].z.start() - (max_z_under_brick + 1);
-                let bz = bricks[label].z.start() - delta..=*bricks[label].z.end() - delta;
-                if delta > 0 {
-                    dropped.insert(label);
-                    dirty = true;
-                }
-                bricks.get_mut(label).unwrap().z = bz;
-            }
+                    .filter(|n2| supported_by[*n2].iter().all(|n3| removed.contains(n3))),
+            );
         }
-
-        sum += dropped.len() as i64
+        sum += removed.len() - 1;
     }
 
-    sum
+    sum as i64
 }
 
 #[cfg(test)]
