@@ -14,7 +14,7 @@ pub fn part1(input: &str) -> i64 {
     }
 
     let mut q = VecDeque::new();
-    q.push_back((start_pos, 0, HashSet::<(i64, i64)>::new()));
+    q.push_back((start_pos, 0, FnvHashSet::<P>::default()));
 
     let mut max_steps = 0;
 
@@ -25,14 +25,14 @@ pub fn part1(input: &str) -> i64 {
         }
         let dirs = match g[pos] {
             '#' => continue,
-            '.' => FOUR_WAY.to_vec(),
-            '>' => vec![RIGHT],
-            'v' => vec![DOWN],
-            '^' => vec![UP],
-            '<' => vec![LEFT],
+            '.' => FOUR_WAY.as_slice(),
+            '>' => [RIGHT].as_slice(),
+            'v' => [DOWN].as_slice(),
+            '^' => [UP].as_slice(),
+            '<' => [LEFT].as_slice(),
             _ => unreachable!(),
         };
-        for next in adjacents(pos, dirs) {
+        for next in adjacents(pos, dirs.into_iter().copied()) {
             if ".>v^<".find(g[next]).is_some() && !visited.contains(&next) {
                 q.push_back((next, steps + 1, visited.clone()));
             }
@@ -42,21 +42,20 @@ pub fn part1(input: &str) -> i64 {
     max_steps
 }
 
+type P = (i64, i64);
+
 /// Simplify the graph by following the hallways and making them into long
 /// edges.
-#[allow(clippy::type_complexity)]
-fn simplified_graph(g: &IGrid2D) -> HashMap<(i64, i64), Vec<((i64, i64), i64)>> {
+fn simplified_graph(g: &IGrid2D) -> FnvHashMap<P, Vec<(P, i64)>> {
     let (i_bounds, j_bounds) = get_grid_bounds(g);
-    let mut junctions = HashMap::new();
+    let mut junctions = FnvHashMap::default();
 
     for i in i_bounds.clone() {
         for j in j_bounds.clone() {
             let p = (i, j);
             if g[p] == '.' {
-                let exits = adjacents(p, FOUR_WAY)
-                    .filter(|n| g[n] == '.')
-                    .collect::<Vec<_>>();
-                if exits.len() != 2 {
+                let exits = adjacents(p, FOUR_WAY).filter(|n| g[n] == '.').count();
+                if exits != 2 {
                     junctions.insert(p, vec![]);
                 }
             }
@@ -67,7 +66,7 @@ fn simplified_graph(g: &IGrid2D) -> HashMap<(i64, i64), Vec<((i64, i64), i64)>> 
         let mut edges = vec![];
 
         for n in adjacents(j, FOUR_WAY) {
-            let mut visited = HashSet::new();
+            let mut visited = FnvHashSet::default();
             visited.insert(j);
 
             let mut q = vec![(n, 1)];
@@ -118,13 +117,12 @@ pub fn part2(input: &str) -> i64 {
 
     let s = simplified_graph(&g);
 
-    #[allow(clippy::type_complexity)]
     fn dfs(
-        s: &HashMap<(i64, i64), Vec<((i64, i64), i64)>>,
-        pos: (i64, i64),
+        s: &FnvHashMap<P, Vec<(P, i64)>>,
+        pos: P,
         steps: i64,
-        visited: &mut HashSet<(i64, i64)>,
-        end_pos: (i64, i64),
+        visited: &mut FnvHashSet<P>,
+        end_pos: P,
     ) -> Option<i64> {
         if pos == end_pos {
             Some(steps)
@@ -145,7 +143,7 @@ pub fn part2(input: &str) -> i64 {
         }
     }
 
-    dfs(&s, start_pos, 0, &mut HashSet::new(), end_pos).unwrap()
+    dfs(&s, start_pos, 0, &mut FnvHashSet::default(), end_pos).unwrap()
 }
 
 #[cfg(test)]
