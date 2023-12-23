@@ -6,7 +6,7 @@ fn solve(g: &IGrid2D, initial_beams: Vec<((i64, i64), (i64, i64))>) -> i64 {
 
     for beam in initial_beams {
         let mut beams = vec![beam];
-        let mut visited = HashSet::new();
+        let mut visited = HashSet::default();
 
         while let Some((pos, mut dir)) = beams.pop() {
             visited.insert((pos, dir));

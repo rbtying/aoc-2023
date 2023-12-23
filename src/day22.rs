@@ -67,7 +67,7 @@ fn fall(
 }
 
 pub fn part1(input: &str) -> i64 {
-    let mut bricks = HashMap::new();
+    let mut bricks = HashMap::default();
     for (label, line) in input.lines().enumerate() {
         let (lhs, rhs) = split1(line, "~");
         let (x1, y1, z1): (i64, i64, i64) = parse3(lhs.split(','));
@@ -96,7 +96,7 @@ pub fn part1(input: &str) -> i64 {
 }
 
 pub fn part2(input: &str) -> i64 {
-    let mut bricks = HashMap::new();
+    let mut bricks = HashMap::default();
     for (label, line) in input.lines().enumerate() {
         let (lhs, rhs) = split1(line, "~");
         let (x1, y1, z1): (i64, i64, i64) = parse3(lhs.split(','));
@@ -120,7 +120,7 @@ pub fn part2(input: &str) -> i64 {
 
     let mut sum = 0;
     for r in &brick_order {
-        let mut removed = HashSet::new();
+        let mut removed = HashSet::default();
 
         let mut q = VecDeque::new();
         q.push_back(*r);

@@ -40,6 +40,9 @@ pub mod prelude {
     pub use petgraph::prelude::*;
     pub use regex::{Regex, RegexBuilder, RegexSet};
 
+    pub type HashMap<K, V> = FnvHashMap<K, V>;
+    pub type HashSet<K> = FnvHashSet<K>;
+
     pub use crate::utils::*;
 
     pub fn read_day_input(module_path: &str) -> String {

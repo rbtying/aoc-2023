@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 fn parse_rules(rules_str: &str) -> HashMap<String, Vec<(String, char, i64, String)>> {
-    let mut rules = HashMap::new();
+    let mut rules = HashMap::default();
     for r in rules_str.lines() {
         let mut rr = vec![];
         let (name, r) = split1(r, "{");
@@ -31,7 +31,7 @@ pub fn part1(input: &str) -> i64 {
     let mut parts = vec![];
     for p in parts_str.lines() {
         let p = p.trim_matches(|c| c == '{' || c == '}');
-        let mut d = HashMap::new();
+        let mut d = HashMap::default();
         let pairs = p.split(',');
 
         for pair in pairs {

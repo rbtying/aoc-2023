@@ -76,7 +76,7 @@ pub fn find_cycle_equals<S, K: Eq + Hash>(
     next: impl Fn(&mut S),
     extract_key: impl Fn(&S) -> K,
 ) -> CycleInfo<S, K> {
-    let mut history = HashMap::new();
+    let mut history = HashMap::default();
     history.insert(extract_key(&initial_state), 0);
     let mut s = initial_state;
 

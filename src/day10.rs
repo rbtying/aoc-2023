@@ -6,7 +6,7 @@ fn get_loop(input: &str) -> Vec<(i64, i64)> {
     let (i_bounds, j_bounds) = get_grid_bounds(&grid);
     let mut s_pos = (-1, -1);
     let mut g = Graph::<(i64, i64), ()>::default();
-    let mut nodes = HashMap::new();
+    let mut nodes = HashMap::default();
 
     for i in i_bounds.clone() {
         for j in j_bounds.clone() {
@@ -43,7 +43,7 @@ fn get_loop(input: &str) -> Vec<(i64, i64)> {
     }
 
     let mut stk = vec![(s, None)];
-    let mut backtrack = HashMap::new();
+    let mut backtrack = HashMap::default();
     while let Some((curr, prev)) = stk.pop() {
         if curr == s && prev.is_some() {
             break;

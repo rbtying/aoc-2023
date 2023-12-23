@@ -59,8 +59,8 @@ pub fn part2(input: &str) -> u32 {
         }
     }
 
-    let mut adjacent_to_gears = HashMap::new();
-    let mut values = HashMap::new();
+    let mut adjacent_to_gears = HashMap::default();
+    let mut values = HashMap::default();
 
     for (i, j) in contiguous_number_starts {
         let start = (i, j);
@@ -72,7 +72,7 @@ pub fn part2(input: &str) -> u32 {
                     if grid[&pos] == '*' {
                         adjacent_to_gears
                             .entry(pos)
-                            .or_insert_with(HashSet::new)
+                            .or_insert_with(HashSet::default)
                             .insert(start);
                     }
                 }

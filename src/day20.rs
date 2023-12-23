@@ -12,7 +12,7 @@ enum Module {
 
 fn build_graph(input: &str) -> (Graph<Module, ()>, HashMap<&'_ str, NodeIndex>) {
     let mut g = Graph::<Module, ()>::new();
-    let mut name = HashMap::new();
+    let mut name = HashMap::default();
 
     for line in input.lines() {
         let (module, recipients) = split1(line, " -> ");
@@ -95,7 +95,7 @@ pub fn part2(input: &str) -> i64 {
 
     // find the important nodes -- the node immediately prior to the rx is a
     // conjunction, so it's all the inputs to the conjunction
-    let mut important = HashSet::new();
+    let mut important = HashSet::default();
     for src in g.edges_directed(name["rx"], Incoming).map(|e| e.source()) {
         let incoming = g
             .edges_directed(src, Incoming)
@@ -105,8 +105,8 @@ pub fn part2(input: &str) -> i64 {
         important.extend(incoming);
     }
 
-    let mut prev: HashMap<_, i64> = HashMap::new();
-    let mut cyc = HashMap::new();
+    let mut prev: HashMap<_, i64> = HashMap::default();
+    let mut cyc = HashMap::default();
 
     for idx in 1.. {
         let mut pulses = VecDeque::new();

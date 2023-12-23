@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 fn count_and_type(input: &str) -> i64 {
-    let mut m = HashMap::new();
+    let mut m = HashMap::default();
     for c in input.chars() {
         *m.entry(c).or_default() += 1;
     }
@@ -54,7 +54,7 @@ pub fn part1(input: &str) -> i64 {
 
 fn count_and_max_type_(input: &str) -> i64 {
     assert_eq!(input.len(), 5);
-    let mut m = HashMap::new();
+    let mut m = HashMap::default();
     for c in input.chars() {
         *m.entry(c).or_default() += 1;
     }

@@ -15,8 +15,10 @@ impl<K: Eq + Hash, V: Default + Clone> Default for DefaultHashMap<K, V> {
     }
 }
 
-impl<K: Eq + Hash, V: Default + Clone> From<HashMap<K, V>> for DefaultHashMap<K, V> {
-    fn from(map: HashMap<K, V>) -> DefaultHashMap<K, V> {
+impl<K: Eq + Hash, V: Default + Clone> From<::std::collections::HashMap<K, V>>
+    for DefaultHashMap<K, V>
+{
+    fn from(map: ::std::collections::HashMap<K, V>) -> DefaultHashMap<K, V> {
         DefaultHashMap {
             map: map.into_iter().collect(),
             default: V::default(),
@@ -33,7 +35,7 @@ impl<K: Eq + Hash, V: Default + Clone> From<FnvHashMap<K, V>> for DefaultHashMap
     }
 }
 
-impl<K: Eq + Hash, V: Clone> From<DefaultHashMap<K, V>> for HashMap<K, V> {
+impl<K: Eq + Hash, V: Clone> From<DefaultHashMap<K, V>> for ::std::collections::HashMap<K, V> {
     fn from(val: DefaultHashMap<K, V>) -> Self {
         val.map.into_iter().collect()
     }

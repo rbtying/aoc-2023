@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 use crate::prelude::*;
 
 pub fn part1(input: &str) -> i64 {
@@ -14,7 +16,7 @@ pub fn part1(input: &str) -> i64 {
     }
 
     let mut q = VecDeque::new();
-    q.push_back((start_pos, 0, FnvHashSet::<P>::default()));
+    q.push_back((start_pos, 0, HashSet::<P>::default()));
 
     let mut max_steps = 0;
 
@@ -32,7 +34,7 @@ pub fn part1(input: &str) -> i64 {
             '<' => [LEFT].as_slice(),
             _ => unreachable!(),
         };
-        for next in adjacents(pos, dirs.into_iter().copied()) {
+        for next in adjacents(pos, dirs.iter().copied()) {
             if ".>v^<".find(g[next]).is_some() && !visited.contains(&next) {
                 q.push_back((next, steps + 1, visited.clone()));
             }
@@ -46,9 +48,9 @@ type P = (i64, i64);
 
 /// Simplify the graph by following the hallways and making them into long
 /// edges.
-fn simplified_graph(g: &IGrid2D) -> FnvHashMap<P, Vec<(P, i64)>> {
+fn simplified_graph(g: &IGrid2D) -> HashMap<P, Vec<(P, i64)>> {
     let (i_bounds, j_bounds) = get_grid_bounds(g);
-    let mut junctions = FnvHashMap::default();
+    let mut junctions = HashMap::default();
 
     for i in i_bounds.clone() {
         for j in j_bounds.clone() {
@@ -66,7 +68,7 @@ fn simplified_graph(g: &IGrid2D) -> FnvHashMap<P, Vec<(P, i64)>> {
         let mut edges = vec![];
 
         for n in adjacents(j, FOUR_WAY) {
-            let mut visited = FnvHashSet::default();
+            let mut visited = HashSet::<P>::default();
             visited.insert(j);
 
             let mut q = vec![(n, 1)];
@@ -118,10 +120,10 @@ pub fn part2(input: &str) -> i64 {
     let s = simplified_graph(&g);
 
     fn dfs(
-        s: &FnvHashMap<P, Vec<(P, i64)>>,
+        s: &HashMap<P, Vec<(P, i64)>>,
         pos: P,
         steps: i64,
-        visited: &mut FnvHashSet<P>,
+        visited: &mut HashSet<P>,
         end_pos: P,
     ) -> Option<i64> {
         if pos == end_pos {
@@ -143,7 +145,7 @@ pub fn part2(input: &str) -> i64 {
         }
     }
 
-    dfs(&s, start_pos, 0, &mut FnvHashSet::default(), end_pos).unwrap()
+    dfs(&s, start_pos, 0, &mut HashSet::default(), end_pos).unwrap()
 }
 
 #[cfg(test)]
@@ -192,7 +194,7 @@ mod tests {
     #[ignore]
     #[test]
     fn part2_input() {
-        // This takes like 2 minutes
+        // This takes like 30 seconds
         assert_eq!(part2(&read_day_input(std::module_path!())), 6586);
     }
 }

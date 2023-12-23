@@ -4,8 +4,8 @@ fn solve(input: &str, mul: i64) -> i64 {
     let orig_grid = parse_char_grid(input);
     let (i_bounds, j_bounds) = get_grid_bounds(&orig_grid);
 
-    let mut galaxy_rows = HashSet::new();
-    let mut galaxy_cols = HashSet::new();
+    let mut galaxy_rows = HashSet::default();
+    let mut galaxy_cols = HashSet::default();
 
     for i in i_bounds.clone() {
         for j in j_bounds.clone() {
