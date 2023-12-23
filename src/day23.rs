@@ -118,25 +118,34 @@ pub fn part2(input: &str) -> i64 {
 
     let s = simplified_graph(&g);
 
-    let mut q = VecDeque::new();
-    q.push_back((start_pos, 0, HashSet::<(i64, i64)>::new()));
-
-    let mut max_steps = 0;
-
-    while let Some((pos, steps, mut visited)) = q.pop_back() {
-        visited.insert(pos);
-        if steps > max_steps && pos == end_pos {
-            max_steps = steps;
-        }
-
-        for (next, s) in &s[&pos] {
-            if g[next] == '.' && !visited.contains(next) {
-                q.push_back((*next, steps + s, visited.clone()));
+    #[allow(clippy::type_complexity)]
+    fn dfs(
+        s: &HashMap<(i64, i64), Vec<((i64, i64), i64)>>,
+        pos: (i64, i64),
+        steps: i64,
+        visited: &mut HashSet<(i64, i64)>,
+        end_pos: (i64, i64),
+    ) -> Option<i64> {
+        if pos == end_pos {
+            Some(steps)
+        } else {
+            visited.insert(pos);
+            let mut b = None;
+            for (next, st) in &s[&pos] {
+                if !visited.contains(next) {
+                    if let Some(v) = dfs(s, *next, steps + st, visited, end_pos) {
+                        if b.map(|vv| vv < v).unwrap_or(true) {
+                            b = Some(v);
+                        }
+                    }
+                }
             }
+            visited.remove(&pos);
+            b
         }
     }
 
-    max_steps
+    dfs(&s, start_pos, 0, &mut HashSet::new(), end_pos).unwrap()
 }
 
 #[cfg(test)]
