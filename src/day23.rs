@@ -1,5 +1,3 @@
-use std::collections::{HashMap, HashSet};
-
 use crate::prelude::*;
 
 pub fn part1(input: &str) -> i64 {

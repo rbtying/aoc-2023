@@ -106,6 +106,11 @@ pub fn parse_ints(input: &str) -> Vec<i64> {
     regex.find_iter(input).map(|x| parse1(x.as_str())).collect()
 }
 
+pub fn parse_floats(input: &str) -> Vec<f64> {
+    let regex = Regex::new(r"-?\d+").unwrap();
+    regex.find_iter(input).map(|x| parse1(x.as_str())).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
