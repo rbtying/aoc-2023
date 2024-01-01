@@ -1,3 +1,6 @@
+use crate::prelude::*;
+
+#[aoc(day1, part1)]
 pub fn part1(input: &str) -> u32 {
     let mut s = 0;
     for line in input.lines() {
@@ -40,6 +43,7 @@ fn str_to_v(s: &str) -> Option<u32> {
     }
 }
 
+#[aoc(day1, part2)]
 pub fn part2(input: &str) -> u32 {
     let mut s = 0;
     for line in input.lines() {
@@ -57,8 +61,6 @@ pub fn part2(input: &str) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::read_day_input;
-
     use super::*;
 
     const EXAMPLE: &str = r#"1abc2
@@ -79,17 +81,7 @@ zoneight234
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 54159);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE2), 281);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 53866);
     }
 }

@@ -28,6 +28,7 @@ fn char_(v: char) -> usize {
     "AKQJT98765432".find(v).unwrap()
 }
 
+#[aoc(day7, part1)]
 pub fn part1(input: &str) -> i64 {
     let mut rows = input
         .lines()
@@ -81,6 +82,7 @@ fn char_2(v: char) -> usize {
     "AKQT98765432J".find(v).unwrap()
 }
 
+#[aoc(day7, part2)]
 pub fn part2(input: &str) -> i64 {
     let mut rows = input
         .lines()
@@ -121,17 +123,7 @@ QQQJA 483"#;
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 247961593);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 5905);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 248750699);
     }
 }

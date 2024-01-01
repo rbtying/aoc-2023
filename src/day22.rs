@@ -66,6 +66,7 @@ fn fall(
     (supports, supported_by)
 }
 
+#[aoc(day22, part1)]
 pub fn part1(input: &str) -> i64 {
     let mut bricks = HashMap::default();
     for (label, line) in input.lines().enumerate() {
@@ -95,6 +96,7 @@ pub fn part1(input: &str) -> i64 {
         .count() as i64
 }
 
+#[aoc(day22, part2)]
 pub fn part2(input: &str) -> i64 {
     let mut bricks = HashMap::default();
     for (label, line) in input.lines().enumerate() {
@@ -158,17 +160,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 432);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 7);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 63166);
     }
 }

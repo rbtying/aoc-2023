@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[aoc(day23, part1)]
 pub fn part1(input: &str) -> i64 {
     let g = parse_char_grid(input);
 
@@ -93,6 +94,7 @@ fn simplified_graph(g: &IGrid2D) -> HashMap<P, Vec<(P, i64)>> {
     junctions
 }
 
+#[aoc(day23, part2)]
 pub fn part2(input: &str) -> i64 {
     let mut g = parse_char_grid(input);
 
@@ -180,19 +182,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 2358);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 154);
-    }
-
-    #[ignore]
-    #[test]
-    fn part2_input() {
-        // This takes like 30 seconds
-        assert_eq!(part2(&read_day_input(std::module_path!())), 6586);
     }
 }

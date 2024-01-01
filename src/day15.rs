@@ -10,6 +10,7 @@ fn hash_fn(s: &str) -> i64 {
     current_value
 }
 
+#[aoc(day15, part1)]
 pub fn part1(input: &str) -> i64 {
     let mut sum = 0;
     for s in input.replace('\n', "").split(',') {
@@ -18,6 +19,7 @@ pub fn part1(input: &str) -> i64 {
     sum
 }
 
+#[aoc(day15, part2)]
 pub fn part2(input: &str) -> i64 {
     let mut boxes: Vec<Vec<(String, i64)>> = vec![vec![]; 256];
 
@@ -64,17 +66,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 510792);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 145);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 269410);
     }
 }

@@ -38,6 +38,7 @@ fn build_graph(input: &str) -> (Graph<Module, ()>, HashMap<&'_ str, NodeIndex>) 
     (g, name)
 }
 
+#[aoc(day20, part1)]
 pub fn part1(input: &str) -> i64 {
     let (mut g, name) = build_graph(input);
 
@@ -90,6 +91,7 @@ pub fn part1(input: &str) -> i64 {
     num_low_pulses * num_high_pulses
 }
 
+#[aoc(day20, part2)]
 pub fn part2(input: &str) -> i64 {
     let (mut g, name) = build_graph(input);
 
@@ -173,15 +175,5 @@ mod tests {
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE), 32000000);
-    }
-
-    #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 731517480);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 244178746156661);
     }
 }

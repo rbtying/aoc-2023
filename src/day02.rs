@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[aoc(day2, part1)]
 pub fn part1(input: &str) -> u32 {
     let mut sum = 0;
     for line in input.lines() {
@@ -24,6 +25,7 @@ pub fn part1(input: &str) -> u32 {
     sum
 }
 
+#[aoc(day2, part2)]
 pub fn part2(input: &str) -> u32 {
     let mut sum = 0;
     for line in input.lines() {
@@ -62,17 +64,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 2563);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 2286);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 70768);
     }
 }

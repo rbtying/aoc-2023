@@ -70,11 +70,13 @@ fn solve(g: &IGrid2D, initial_beams: Vec<((i64, i64), (i64, i64))>) -> i64 {
     max_energized
 }
 
+#[aoc(day16, part1)]
 pub fn part1(input: &str) -> i64 {
     let g = parse_char_grid(input);
     solve(&g, vec![((0, 0), RIGHT)])
 }
 
+#[aoc(day16, part2)]
 pub fn part2(input: &str) -> i64 {
     let g = parse_char_grid(input);
     let (i_bounds, j_bounds) = get_grid_bounds(&g);
@@ -113,17 +115,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 8901);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 51);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 9064);
     }
 }

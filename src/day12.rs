@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[aoc(day12, part1)]
 pub fn part1(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
@@ -59,6 +60,7 @@ fn solve_recursive(s: &[char], l: &[i64], in_seq: Option<i64>) -> i64 {
     }
 }
 
+#[aoc(day12, part2)]
 pub fn part2(input: &str) -> i64 {
     let mut s = 0;
     for line in input.lines() {
@@ -95,17 +97,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 7402);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 525152);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 3384337640277);
     }
 }

@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[aoc(day4, part1)]
 pub fn part1(input: &str) -> usize {
     let mut sum = 0;
     for line in input.lines() {
@@ -18,6 +19,7 @@ pub fn part1(input: &str) -> usize {
     sum
 }
 
+#[aoc(day4, part2)]
 pub fn part2(input: &str) -> usize {
     let mut num_cards_processed = 0;
     let mut num_duplicates: DefaultHashMap<usize, usize> = DefaultHashMap::default();
@@ -56,17 +58,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"#;
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 15205);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 30);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 6189740);
     }
 }

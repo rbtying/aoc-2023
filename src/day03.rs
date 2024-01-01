@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[aoc(day3, part1)]
 pub fn part1(input: &str) -> u32 {
     let grid = parse_char_grid(input);
     let (i_range, j_range) = get_grid_bounds(&grid);
@@ -42,6 +43,7 @@ pub fn part1(input: &str) -> u32 {
     sums
 }
 
+#[aoc(day3, part2)]
 pub fn part2(input: &str) -> u32 {
     let grid = parse_char_grid(input);
     let (i_range, j_range) = get_grid_bounds(&grid);
@@ -118,17 +120,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 544664);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 467835);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 84495585);
     }
 }

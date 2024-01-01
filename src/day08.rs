@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+#[aoc(day8, part1)]
 pub fn part1(input: &str) -> i64 {
     let (instructions, lookups) = split1(input, "\n\n");
 
@@ -25,6 +26,7 @@ pub fn part1(input: &str) -> i64 {
     unreachable!()
 }
 
+#[aoc(day8, part2)]
 pub fn part2(input: &str) -> i64 {
     let (instructions, lookups) = split1(input, "\n\n");
 
@@ -84,17 +86,7 @@ XXX = (XXX, XXX)"#;
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 17873);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE2), 6);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 15746133679061);
     }
 }

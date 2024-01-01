@@ -1,5 +1,10 @@
 use crate::prelude::*;
 
+#[aoc(day21, part1)]
+pub fn part1_in(input: &str) -> i64 {
+    part1(input, 64)
+}
+
 pub fn part1(input: &str, target: i64) -> i64 {
     let g = parse_char_grid(input);
 
@@ -29,6 +34,7 @@ pub fn part1(input: &str, target: i64) -> i64 {
     visited[0].len() as i64
 }
 
+#[aoc(day21, part2)]
 pub fn part2(input: &str) -> i64 {
     let g = parse_char_grid(input);
     let (i_bounds, j_bounds) = get_grid_bounds(&g);
@@ -101,15 +107,5 @@ mod tests {
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE, 6), 16);
-    }
-
-    #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!()), 64), 3578);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 594115391548176);
     }
 }

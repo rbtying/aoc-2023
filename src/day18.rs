@@ -23,6 +23,7 @@ fn solve(iter: impl IntoIterator<Item = (Point, i64)>) -> i64 {
     interior_area.abs() + b / 2 + 1
 }
 
+#[aoc(day18, part1)]
 pub fn part1(input: &str) -> i64 {
     solve(input.lines().map(|line| {
         let (dir, len, _): (&str, i64, &str) = parse3(line.split(' '));
@@ -39,6 +40,7 @@ pub fn part1(input: &str) -> i64 {
     }))
 }
 
+#[aoc(day18, part2)]
 pub fn part2(input: &str) -> i64 {
     solve(input.lines().map(|line| {
         let (_, _, color): (&str, i64, &str) = parse3(line.split(' '));
@@ -83,17 +85,7 @@ U 2 (#7a21e3)"#;
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 56923);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 952408144115);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 66296566363189);
     }
 }

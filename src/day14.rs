@@ -16,6 +16,7 @@ fn fall_north(grid: &mut IGrid2D) {
     }
 }
 
+#[aoc(day14, part1)]
 pub fn part1(input: &str) -> i64 {
     let mut g = parse_char_grid(input);
     fall_north(&mut g);
@@ -35,6 +36,7 @@ fn score(g: &IGrid2D) -> i64 {
     sum
 }
 
+#[aoc(day14, part2)]
 pub fn part2(input: &str) -> i64 {
     let mut g = parse_char_grid(input);
     g.retain(|_, v| *v != '.');
@@ -77,17 +79,7 @@ O.#..O.#.#
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 106378);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 64);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 90795);
     }
 }

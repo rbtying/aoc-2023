@@ -23,6 +23,7 @@ fn parse_rules(rules_str: &str) -> HashMap<String, Vec<(String, char, i64, Strin
     rules
 }
 
+#[aoc(day19, part1)]
 pub fn part1(input: &str) -> i64 {
     let (rules_str, parts_str) = split1(input, "\n\n");
 
@@ -72,6 +73,7 @@ pub fn part1(input: &str) -> i64 {
     sum
 }
 
+#[aoc(day19, part2)]
 pub fn part2(input: &str) -> i64 {
     let (rules_str, _) = split1(input, "\n\n");
 
@@ -156,17 +158,7 @@ hdj{m>838:A,pv}
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 342650);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 167409079868000);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 130303473508222);
     }
 }

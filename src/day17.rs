@@ -64,10 +64,12 @@ fn solve(input: &str, min_dist: i64, max_dist: i64) -> i64 {
     unreachable!()
 }
 
+#[aoc(day17, part1)]
 pub fn part1(input: &str) -> i64 {
     solve(input, 0, 3)
 }
 
+#[aoc(day17, part2)]
 pub fn part2(input: &str) -> i64 {
     solve(input, 4, 10)
 }
@@ -96,17 +98,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 907);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 94);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 1057);
     }
 }

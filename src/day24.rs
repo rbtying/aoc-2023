@@ -14,6 +14,11 @@ fn intersects(
     Some((x, y))
 }
 
+#[aoc(day24, part1)]
+pub fn part1_in(input: &str) -> i64 {
+    part1(input, 200000000000000., 400000000000000.)
+}
+
 pub fn part1(input: &str, min: f64, max: f64) -> i64 {
     let mut eqns = vec![];
     for line in input.lines() {
@@ -65,17 +70,5 @@ mod tests {
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE, 7., 27.), 2);
-    }
-
-    #[test]
-    fn part1_input() {
-        assert_eq!(
-            part1(
-                &read_day_input(std::module_path!()),
-                200000000000000.,
-                400000000000000.
-            ),
-            12783
-        );
     }
 }

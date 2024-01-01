@@ -17,6 +17,7 @@ fn apply_map(m: &[(i64, i64, i64)], v: i64) -> i64 {
     v
 }
 
+#[aoc(day5, part1)]
 pub fn part1(input: &str) -> i64 {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;
@@ -60,6 +61,7 @@ fn apply_map2(
     r
 }
 
+#[aoc(day5, part2)]
 pub fn part2(input: &str) -> i64 {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;
@@ -77,6 +79,7 @@ pub fn part2(input: &str) -> i64 {
     v.into_iter().map(|x| *x.start()).min().unwrap()
 }
 
+#[aoc(day5, part1, dumb)]
 pub fn part2dumb(input: &str) -> i64 {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;
@@ -141,23 +144,7 @@ humidity-to-location map:
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 318728750);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 46);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 37384986);
-    }
-
-    #[ignore]
-    #[test]
-    fn part2_input_dumb() {
-        assert_eq!(part2dumb(&read_day_input(std::module_path!())), 37384986);
     }
 }

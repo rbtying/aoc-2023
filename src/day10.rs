@@ -71,11 +71,13 @@ fn get_loop(input: &str) -> Vec<(i64, i64)> {
         .collect()
 }
 
+#[aoc(day10, part1)]
 pub fn part1(input: &str) -> i64 {
     let inloop = get_loop(input);
     (inloop.len() / 2) as i64
 }
 
+#[aoc(day10, part2)]
 pub fn part2(input: &str) -> i64 {
     let path = get_loop(input);
     let path_len = path.len() as i64;
@@ -111,17 +113,7 @@ LJ..."#;
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 6773);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE2), 4);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 493);
     }
 }

@@ -49,10 +49,12 @@ fn solve(input: &str, mul: i64) -> i64 {
     s
 }
 
+#[aoc(day11, part1)]
 pub fn part1(input: &str) -> i64 {
     solve(input, 2)
 }
 
+#[aoc(day11, part2)]
 pub fn part2(input: &str) -> i64 {
     solve(input, 1_000_000)
 }
@@ -78,17 +80,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 9556712);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 82000210);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 678626199476);
     }
 }

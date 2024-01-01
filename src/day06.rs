@@ -19,6 +19,7 @@ fn solve_quad(time: i64, distance: i64) -> i64 {
     (x1 - x2) as i64
 }
 
+#[aoc(day6, part1)]
 pub fn part1(input: &str) -> i64 {
     let (line1, line2) = split1(input, "\n");
     let times = parse_ints(line1);
@@ -31,6 +32,7 @@ pub fn part1(input: &str) -> i64 {
         .product()
 }
 
+#[aoc(day6, part2)]
 pub fn part2(input: &str) -> i64 {
     let (line1, line2) = split1(input, "\n");
     let time: i64 = parse_ints(&line1.replace(' ', ""))[0];
@@ -51,17 +53,7 @@ Distance:  9  40  200"#;
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 3316275);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 71503);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 27102791);
     }
 }

@@ -41,10 +41,12 @@ fn solve(input: &str, smudges: i64) -> i64 {
     s
 }
 
+#[aoc(day13, part1)]
 pub fn part1(input: &str) -> i64 {
     solve(input, 0)
 }
 
+#[aoc(day13, part2)]
 pub fn part2(input: &str) -> i64 {
     solve(input, 1)
 }
@@ -75,17 +77,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_input() {
-        assert_eq!(part1(&read_day_input(std::module_path!())), 35538);
-    }
-
-    #[test]
     fn part2_example() {
         assert_eq!(part2(EXAMPLE), 400);
-    }
-
-    #[test]
-    fn part2_input() {
-        assert_eq!(part2(&read_day_input(std::module_path!())), 30442);
     }
 }

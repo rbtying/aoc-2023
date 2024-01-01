@@ -12,6 +12,7 @@ pub mod day11;
 pub mod day12;
 pub mod day13;
 pub mod day14;
+pub mod day15;
 pub mod day16;
 pub mod day17;
 pub mod day18;
@@ -36,6 +37,7 @@ pub mod prelude {
 
     pub use ::num::bigint::*;
     pub use ::num::rational::*;
+    pub use aoc_runner_derive::*;
     pub use euclid::*;
     pub use fnv::*;
     pub use petgraph::prelude::*;
@@ -45,12 +47,6 @@ pub mod prelude {
     pub type HashSet<K> = FnvHashSet<K>;
 
     pub use crate::utils::*;
-
-    pub fn read_day_input(module_path: &str) -> String {
-        let path = format!(
-            "puzzle/{}/input",
-            split1(split1(module_path, "::").1, "::").0
-        );
-        std::fs::read_to_string(path).unwrap()
-    }
 }
+
+aoc_runner_derive::aoc_lib! { year = 2023 }
