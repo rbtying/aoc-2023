@@ -2,8 +2,9 @@ use std::fmt::Debug;
 
 use crate::prelude::*;
 
-use petgraph::visit::{Data, GraphBase, IntoEdgeReferences, IntoEdgesDirected};
-use petgraph::visit::{EdgeCount, IntoNodeIdentifiers};
+use petgraph::visit::{
+    Data, GraphBase, IntoEdgeReferences, IntoEdgesDirected, IntoNodeIdentifiers,
+};
 
 #[derive(Debug, Clone)]
 pub struct FlowAnalysis<Flow, NodeId, EdgeRef> {
@@ -27,7 +28,6 @@ where
         + IntoNodeIdentifiers
         + Data<NodeWeight = Node, EdgeWeight = Flow>
         + GraphBase<NodeId = NodeId, EdgeId = EdgeId>
-        + EdgeCount
         + Deref<Target = G>,
     G: Index<EdgeId, Output = Flow>,
 {
