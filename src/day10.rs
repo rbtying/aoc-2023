@@ -1,3 +1,5 @@
+use petgraph::data::Build;
+
 use crate::prelude::*;
 
 fn get_loop(input: &str) -> Vec<(i64, i64)> {
@@ -5,13 +7,11 @@ fn get_loop(input: &str) -> Vec<(i64, i64)> {
 
     let (i_bounds, j_bounds) = get_grid_bounds(&grid);
     let mut s_pos = (-1, -1);
-    let mut g = Graph::<(i64, i64), ()>::default();
-    let mut nodes = HashMap::default();
+    let mut g = DiGraphMap::default();
 
     for i in i_bounds.clone() {
         for j in j_bounds.clone() {
             let p = (i, j);
-            let n = *nodes.entry(p).or_insert_with(|| g.add_node(p));
             if grid[&p] == 'S' {
                 s_pos = (i, j);
             }
@@ -29,23 +29,21 @@ fn get_loop(input: &str) -> Vec<(i64, i64)> {
 
                 for d in exits {
                     let dst = point_add(p, d);
-                    let node_dst = *nodes.entry(dst).or_insert_with(|| g.add_node(dst));
-                    g.update_edge(n, node_dst, ());
+                    g.update_edge(p, dst, ());
                 }
             }
         }
     }
 
-    let s = nodes[&s_pos];
-    let into_s_orig = g.neighbors_directed(s, Incoming).collect::<Vec<_>>();
+    let into_s_orig = g.neighbors_directed(s_pos, Incoming).collect::<Vec<_>>();
     for n in into_s_orig {
-        g.update_edge(s, n, ());
+        g.update_edge(s_pos, n, ());
     }
 
-    let mut stk = vec![(s, None)];
+    let mut stk = vec![(s_pos, None)];
     let mut backtrack = HashMap::default();
     while let Some((curr, prev)) = stk.pop() {
-        if curr == s && prev.is_some() {
+        if curr == s_pos && prev.is_some() {
             break;
         }
         for next in g.neighbors(curr) {
@@ -57,18 +55,16 @@ fn get_loop(input: &str) -> Vec<(i64, i64)> {
         }
     }
 
-    let mut path = vec![s];
+    let mut path = vec![s_pos];
     loop {
         let x = backtrack[&path.last().unwrap()];
-        if x == s {
+        if x == s_pos {
             break;
         }
         path.push(x);
     }
 
-    path.into_iter()
-        .map(|n| *g.node_weight(n).unwrap())
-        .collect()
+    path
 }
 
 #[aoc(day10, part1)]
