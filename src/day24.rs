@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+use smtlib::{backend::Z3Binary, Real, Solver, Sort};
+
 fn intersects(
     (xa, ya, dxa, dya): (f64, f64, f64, f64),
     (xb, yb, dxb, dyb): (f64, f64, f64, f64),
@@ -57,6 +59,45 @@ pub fn part1(input: &str, min: f64, max: f64) -> i64 {
     ct
 }
 
+#[aoc(day24, part2)]
+pub fn part2(input: &str) -> u64 {
+    let mut eqns = vec![];
+    for line in input.lines().take(3) {
+        let (pos, vel) = split1(line, " @ ");
+        let pos = parse_floats(pos);
+        let vel = parse_floats(vel);
+
+        eqns.push((pos, vel));
+    }
+
+    let mut solver = Solver::new(Z3Binary::new("z3").unwrap()).unwrap();
+    let x = Real::from_name("x");
+    let y = Real::from_name("y");
+    let z = Real::from_name("z");
+    let dx = Real::from_name("dx");
+    let dy = Real::from_name("dy");
+    let dz = Real::from_name("dz");
+
+    for (idx, (pos, vel)) in eqns.into_iter().enumerate() {
+        let t = Real::from_name(format!("t{}", idx));
+        solver.assert(t.gt(0)).unwrap();
+        solver
+            .assert((x + t * dx)._eq(pos[0] + t * vel[0]))
+            .unwrap();
+        solver
+            .assert((y + t * dy)._eq(pos[1] + t * vel[1]))
+            .unwrap();
+        solver
+            .assert((z + t * dz)._eq(pos[2] + t * vel[2]))
+            .unwrap();
+    }
+    let model = solver.check_sat_with_model().unwrap().expect_sat().unwrap();
+    let x: u64 = model.eval(x).unwrap().to_string().parse::<f64>().unwrap() as u64;
+    let y: u64 = model.eval(y).unwrap().to_string().parse::<f64>().unwrap() as u64;
+    let z: u64 = model.eval(z).unwrap().to_string().parse::<f64>().unwrap() as u64;
+    x + y + z
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -70,5 +111,10 @@ mod tests {
     #[test]
     fn part1_example() {
         assert_eq!(part1(EXAMPLE, 7., 27.), 2);
+    }
+
+    #[test]
+    fn part2_example() {
+        assert_eq!(part2(EXAMPLE), 47);
     }
 }
