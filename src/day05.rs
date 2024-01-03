@@ -79,7 +79,7 @@ pub fn part2(input: &str) -> i64 {
     v.into_iter().map(|x| *x.start()).min().unwrap()
 }
 
-#[aoc(day5, part1, dumb)]
+// #[aoc(day5, part1, dumb)]
 pub fn part2dumb(input: &str) -> i64 {
     let (seed_str, input) = split1(input, "\n\n");
     let seed_str = split1(seed_str, ": ").1;

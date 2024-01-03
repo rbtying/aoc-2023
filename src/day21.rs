@@ -45,32 +45,17 @@ pub fn part2(input: &str) -> i64 {
     queue.push_back((*start_pos, 0));
 
     let mut visited: DefaultHashMap<i64, HashSet<(i64, i64)>> = DefaultHashMap::default();
-    let mut counts = vec![];
-    let mut idxes = vec![];
+
+    visited[0].insert(*start_pos);
 
     let target: i64 = 26501365;
+    let offset = target % i_bounds.end;
 
     while let Some((n, step)) = queue.pop_front() {
-        if visited[step].contains(&n) {
-            continue;
-        }
-        visited[step].insert(n);
-
         // if we got to `step`, we've finished `step-1`. Do some cleanup
-        if !visited[step - 1].is_empty() {
-            let prev_len = visited[step - 1].len() as i64;
-            if ((step - 1) - i_bounds.end / 2) % i_bounds.end == 0 {
-                idxes.push(step - 1);
-                counts.push(prev_len);
-
-                eprintln!("counts: {:?}", counts);
-                if counts.len() == 3 {
-                    return polynomial_regression(&idxes, &counts, counts.len() - 1).eval(target);
-                }
-            }
-            visited.remove(&(step - 1));
+        if step == offset + 2 * i_bounds.end + 1 {
+            break;
         }
-
         if step == target {
             continue;
         }
@@ -78,14 +63,32 @@ pub fn part2(input: &str) -> i64 {
         for x in adjacents(n, FOUR_WAY) {
             let xx = (x.0.rem_euclid(i_bounds.end), x.1.rem_euclid(j_bounds.end));
 
+            if visited[step + 1].is_empty() {
+                let p = visited[step - 1].clone();
+                visited.insert(step + 1, p);
+            }
+
             if (g[xx] == '.' || g[xx] == 'S') && !visited[step + 1].contains(&x) {
+                visited[step + 1].insert(x);
                 queue.push_back((x, step + 1));
             }
         }
     }
-    print_char_grid(&g);
 
-    visited[target].len() as i64
+    polynomial_regression(
+        &[
+            offset,
+            offset + i_bounds.end,
+            offset + i_bounds.end + i_bounds.end,
+        ],
+        &[
+            visited[offset].len() as i64,
+            visited[offset + i_bounds.end].len() as i64,
+            visited[offset + i_bounds.end + i_bounds.end].len() as i64,
+        ],
+        2,
+    )
+    .eval(target)
 }
 
 #[cfg(test)]

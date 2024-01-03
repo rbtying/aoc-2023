@@ -94,8 +94,8 @@ fn simplified_graph(g: &IGrid2D) -> HashMap<P, Vec<(P, i64)>> {
     junctions
 }
 
-#[aoc(day23, part2)]
-pub fn part2(input: &str) -> i64 {
+#[aoc_generator(day23, part2)]
+pub fn part2_gen(input: &str) -> (usize, usize, Vec<Vec<(usize, i64)>>) {
     let mut g = parse_char_grid(input);
 
     let (i_bounds, j_bounds) = get_grid_bounds(&g);
@@ -117,22 +117,69 @@ pub fn part2(input: &str) -> i64 {
         }
     }
 
-    let s = simplified_graph(&g);
+    let mut s = simplified_graph(&g);
 
+    // Slightly trim the graph depth -- there's only one path to the end, so we
+    // can collapse the end by one node.
+    let mut paths_to_end = s
+        .iter()
+        .filter(|(_, v)| v.iter().any(|(a, _)| *a == end_pos))
+        .collect::<Vec<_>>();
+    assert_eq!(paths_to_end.len(), 1);
+    let (new_end_pos, next) = paths_to_end.remove(0);
+    let new_end_pos = *new_end_pos;
+    let extra_cost = next
+        .iter()
+        .filter(|(p, _)| *p == end_pos)
+        .map(|(_, c)| *c)
+        .next()
+        .unwrap();
+    s.remove(&end_pos);
+    for v in s.values_mut() {
+        for (p, c) in v {
+            if *p == new_end_pos {
+                *c += extra_cost;
+            }
+        }
+    }
+    s.get_mut(&new_end_pos).unwrap().clear();
+    end_pos = new_end_pos;
+
+    // Rewrite the graph using integer nodes for faster runtime
+    let keys = s.keys().collect::<Vec<_>>();
+    let mut graf = Vec::with_capacity(keys.len());
+
+    for k in &keys {
+        let v = &s[k];
+        graf.push(
+            v.iter()
+                .map(|(p, c)| (keys.iter().position(|x| *x == p).unwrap(), *c))
+                .collect::<Vec<_>>(),
+        );
+    }
+
+    let start = keys.iter().position(|x| **x == start_pos).unwrap();
+    let end = keys.iter().position(|x| **x == end_pos).unwrap();
+
+    (start, end, graf)
+}
+
+#[aoc(day23, part2)]
+pub fn part2((start, end, graf): &(usize, usize, Vec<Vec<(usize, i64)>>)) -> i64 {
     fn dfs(
-        s: &HashMap<P, Vec<(P, i64)>>,
-        pos: P,
+        s: &[Vec<(usize, i64)>],
+        pos: usize,
         steps: i64,
-        visited: &mut HashSet<P>,
-        end_pos: P,
+        mut visited: u64,
+        end_pos: usize,
     ) -> Option<i64> {
         if pos == end_pos {
             Some(steps)
         } else {
-            visited.insert(pos);
+            visited |= 1 << pos;
             let mut b = None;
-            for (next, st) in &s[&pos] {
-                if !visited.contains(next) {
+            for (next, st) in &s[pos] {
+                if visited & (1 << *next) == 0 {
                     if let Some(v) = dfs(s, *next, steps + st, visited, end_pos) {
                         if b.map(|vv| vv < v).unwrap_or(true) {
                             b = Some(v);
@@ -140,12 +187,11 @@ pub fn part2(input: &str) -> i64 {
                     }
                 }
             }
-            visited.remove(&pos);
             b
         }
     }
 
-    dfs(&s, start_pos, 0, &mut HashSet::default(), end_pos).unwrap()
+    dfs(graf, *start, 0, 0, *end).unwrap()
 }
 
 #[cfg(test)]
@@ -183,6 +229,6 @@ mod tests {
 
     #[test]
     fn part2_example() {
-        assert_eq!(part2(EXAMPLE), 154);
+        assert_eq!(part2(&part2_gen(EXAMPLE)), 154);
     }
 }
